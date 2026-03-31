@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f0f17">
+  <title>TaskFlow — Email Template Preview</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .preview-layout{min-height:100vh;display:flex;flex-direction:column}
+    .preview-header{padding:20px 32px;background:var(--bg-secondary);border-bottom:1px solid var(--border-primary);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .preview-header-left{display:flex;align-items:center;gap:12px}
+    .preview-header-left img{width:36px;height:36px}
+    .preview-header-left h1{font-size:var(--text-xl)}
+    .preview-header-sub{font-size:var(--text-sm);color:var(--text-tertiary)}
+    .preview-header-right{display:flex;align-items:center;gap:8px}
+    .preview-body{flex:1;display:flex;flex-direction:column;padding:24px 32px;max-width:1200px;margin:0 auto;width:100%}
+    .template-tabs{display:flex;gap:0;border-bottom:2px solid var(--border-primary);margin-bottom:24px;overflow-x:auto}
+    .template-tab{display:flex;align-items:center;gap:8px;padding:14px 20px;font-size:var(--text-sm);font-weight:600;color:var(--text-tertiary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all var(--transition-fast)}
+    .template-tab:hover{color:var(--text-primary)}
+    .template-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .template-tab svg{width:18px;height:18px}
+    .preview-controls{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .preview-area{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:20px;background:var(--bg-tertiary);border-radius:var(--radius-lg);min-height:500px;overflow:auto;position:relative}
+    .preview-frame-desktop{width:700px;background:var(--bg-card);border-radius:12px;box-shadow:var(--shadow-lg);overflow:hidden}
+    .browser-chrome{background:var(--bg-secondary);padding:8px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-primary)}
+    .traffic-lights{display:flex;gap:6px}
+    .traffic-light{width:12px;height:12px;border-radius:50%}
+    .tl-red{background:#ff5f57}.tl-yellow{background:#febc2e}.tl-green{background:#28c840}
+    .url-bar{flex:1;background:var(--bg-tertiary);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--text-tertiary);font-family:var(--font-mono)}
+    .preview-frame-mobile{width:375px;background:#000;border-radius:40px;padding:12px;box-shadow:var(--shadow-lg)}
+    .mobile-notch{width:120px;height:24px;background:#000;border-radius:0 0 16px 16px;margin:0 auto 0;position:relative;z-index:2}
+    .mobile-screen{border-radius:28px;overflow:hidden;background:#fff}
+    .mobile-home-bar{width:120px;height:5px;background:rgba(255,255,255,0.3);border-radius:3px;margin:8px auto 4px}
+    .preview-iframe{width:100%;border:none;min-height:600px}
+    .info-panel{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-lg);padding:24px;margin-top:20px}
+    .info-panel h3{margin-bottom:12px}
+    .info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-secondary)}
+    .info-row:last-child{border-bottom:none}
+    .info-label{font-size:var(--text-sm);color:var(--text-tertiary)}
+    .info-value{font-size:var(--text-sm);font-weight:500}
+    .var-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .var-chip{font-family:var(--font-mono);font-size:12px;padding:4px 10px;background:var(--accent-light);color:var(--accent);border-radius:var(--radius-full);font-weight:500}
+    .responsive-buttons{display:flex;gap:6px;margin-top:16px}
+    .raw-html-view{background:var(--bg-input);border:1px solid var(--border-primary);border-radius:var(--radius-md);padding:16px;font-family:var(--font-mono);font-size:12px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;overflow-x:auto;max-height:600px}
+    .plain-text-view{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-md);padding:24px;font-size:14px;line-height:1.8;color:var(--text-secondary);max-width:600px;margin:0 auto}
+    .pin-overlay{position:fixed;inset:0;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center}
+    .pin-card{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-xl);padding:48px;text-align:center;box-shadow:var(--shadow-lg);max-width:400px;width:90%;animation:springIn 0.5s ease-out}
+    .pin-card img{width:56px;height:56px;margin:0 auto 16px}
+    .pin-input{text-align:center;font-size:24px;letter-spacing:12px;font-weight:700;max-width:200px;margin:20px auto}
+    .pin-error{color:var(--error);font-size:var(--text-sm);margin-top:8px;display:none}
+    .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--success);color:#fff;padding:10px 24px;border-radius:var(--radius-full);font-weight:600;font-size:14px;z-index:999;animation:fadeSlideUp 0.3s ease-out}
+  </style>
+</head>
+<body>
+  <!-- PIN Gate -->
+  <div class="pin-overlay" id="pin-overlay">
+    <div class="pin-card">
+      <img src="assets/logo.svg" alt="TaskFlow">
+      <h2 style="margin-bottom:4px">Email Template Preview</h2>
+      <p style="color:var(--text-tertiary);font-size:14px">Enter the admin PIN to continue</p>
+      <input class="input pin-input" type="password" id="pin-input" maxlength="4" placeholder="••••" autofocus>
+      <div class="pin-error" id="pin-error">Incorrect PIN. Try again.</div>
+      <button class="btn btn-primary w-full" style="margin-top:16px" id="pin-submit">Unlock</button>
+    </div>
+  </div>
+
+  <div class="preview-layout" id="preview-layout" style="display:none">
+    <!-- Header -->
+    <div class="preview-header">
+      <div class="preview-header-left">
+        <img src="assets/logo.svg" alt="TaskFlow">
+        <div>
+          <h1 class="gradient-text">Email Template Preview</h1>
+          <div class="preview-header-sub">View and inspect all transactional email templates</div>
+        </div>
+      </div>
+      <div class="preview-header-right">
+        <button class="btn btn-secondary btn-sm" id="btn-copy-template">
+          <svg class="icon-sm" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          Copy Template Code
+        </button>
+        <button class="btn btn-ghost btn-icon btn-sm" id="btn-theme-toggle" data-tooltip="Toggle Theme">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="preview-body">
+      <!-- Template Tabs -->
+      <div class="template-tabs" id="template-tabs">
+        <div class="template-tab active" data-template="confirm-signup">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Confirm Signup
+        </div>
+        <div class="template-tab" data-template="reset-password">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          Reset Password
+        </div>
+        <div class="template-tab" data-template="change-email">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="22,6 12,13 2,6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          Change Email
+        </div>
+        <div class="template-tab" data-template="magic-link">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          Magic Link
+        </div>
+      </div>
+
+      <!-- Preview Controls -->
+      <div class="preview-controls">
+        <div class="pill-group" id="preview-mode">
+          <div class="pill-option active" data-mode="desktop">🖥️ Desktop</div>
+          <div class="pill-option" data-mode="mobile">📱 Mobile</div>
+          <div class="pill-option" data-mode="dark">🌙 Dark</div>
+          <div class="pill-option" data-mode="plain">📝 Plain Text</div>
+          <div class="pill-option" data-mode="raw">🔧 Raw HTML</div>
+        </div>
+        <label class="checkbox-wrapper" style="font-size:13px;margin-left:auto">
+          <input type="checkbox" id="test-data-toggle">
+          <span class="checkbox-custom"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Preview with test data
+        </label>
+      </div>
+
+      <!-- Preview Area -->
+      <div class="preview-area" id="preview-area">
+        <div class="preview-frame-desktop" id="desktop-frame">
+          <div class="browser-chrome">
+            <div class="traffic-lights"><div class="traffic-light tl-red"></div><div class="traffic-light tl-yellow"></div><div class="traffic-light tl-green"></div></div>
+            <div class="url-bar">mail.google.com</div>
+          </div>
+          <iframe class="preview-iframe" id="preview-iframe" sandbox="allow-same-origin"></iframe>
+        </div>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" id="info-panel">
+        <h3 id="info-template-name">Confirm Signup</h3>
+        <div class="info-row"><span class="info-label">Subject Line</span><span class="info-value" id="info-subject">Confirm your TaskFlow account ✅</span></div>
+        <div class="info-row"><span class="info-label">Triggered When</span><span class="info-value" id="info-trigger">User signs up with email</span></div>
+        <div>
+          <span class="info-label">Supabase Variables</span>
+          <div class="var-chips" id="info-vars"><span class="var-chip">{{ .ConfirmationURL }}</span></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button class="btn btn-secondary btn-sm" id="btn-copy-subject">Copy Subject</button>
+          <button class="btn btn-secondary btn-sm" id="btn-copy-html">Copy Full HTML</button>
+        </div>
+
+        <!-- Responsive Check -->
+        <div style="margin-top:20px">
+          <span class="info-label">Responsive Check</span>
+          <div class="responsive-buttons" id="responsive-buttons">
+            <button class="btn btn-ghost btn-sm" data-width="320">320px</button>
+            <button class="btn btn-ghost btn-sm" data-width="375">375px</button>
+            <button class="btn btn-ghost btn-sm" data-width="480">480px</button>
+            <button class="btn btn-ghost btn-sm active" data-width="600">600px</button>
+            <button class="btn btn-ghost btn-sm" data-width="full">Full</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // Email Preview Admin — Config & Logic
+    // ============================================
+    const CONFIG = { PIN: '1234' };
+
+    const TEMPLATES = {
+      'confirm-signup': {
+        name: 'Confirm Signup', file: 'emails/confirm-signup.html',
+        subject: 'Confirm your TaskFlow account ✅',
+        trigger: 'User signs up with email/password',
+        vars: ['{{ .ConfirmationURL }}', '{{ .Name }}'],
+      },
+      'reset-password': {
+        name: 'Reset Password', file: 'emails/reset-password.html',
+        subject: 'Reset your TaskFlow password 🔐',
+        trigger: 'User requests password reset',
+        vars: ['{{ .ConfirmationURL }}'],
+      },
+      'change-email': {
+        name: 'Change Email', file: 'emails/change-email.html',
+        subject: 'Confirm your new email address for TaskFlow 📬',
+        trigger: 'User updates their email in settings',
+        vars: ['{{ .ConfirmationURL }}', '{{ .NewEmail }}'],
+      },
+      'magic-link': {
+        name: 'Magic Link', file: 'emails/magic-link.html',
+        subject: 'Your TaskFlow magic link ✨',
+        trigger: 'User requests passwordless sign-in',
+        vars: ['{{ .ConfirmationURL }}'],
+      },
+    };
+
+    const TEST_DATA = {
+      '{{ .ConfirmationURL }}': '#',
+      '{{ .Name }}': 'Alex Johnson',
+      '{{ .NewEmail }}': 'alex.new@example.com',
+    };
+
+    let currentTemplate = 'confirm-signup';
+    let currentMode = 'desktop';
+    let rawHTMLCache = {};
+    let isDark = true;
+
+    // ---- PIN Gate ----
+    function checkPin() {
+      if (sessionStorage.getItem('email-preview-unlocked') === 'true') {
+        unlock();
+        return;
+      }
+    }
+    function unlock() {
+      document.getElementById('pin-overlay').style.display = 'none';
+      document.getElementById('preview-layout').style.display = 'flex';
+      sessionStorage.setItem('email-preview-unlocked', 'true');
+      loadTemplate(currentTemplate);
+    }
+    document.getElementById('pin-submit')?.addEventListener('click', () => {
+      const pin = document.getElementById('pin-input').value;
+      if (pin === CONFIG.PIN) { unlock(); }
+      else {
+        document.getElementById('pin-error').style.display = 'block';
+        document.getElementById('pin-input').classList.add('input--error');
+        document.getElementById('pin-input').classList.add('animate-shake');
+        setTimeout(() => document.getElementById('pin-input').classList.remove('animate-shake'), 500);
+      }
+    });
+    document.getElementById('pin-input')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('pin-submit').click();
+    });
+    checkPin();
+
+    // ---- Load Template ----
+    async function loadTemplate(key) {
+      currentTemplate = key;
+      const tmpl = TEMPLATES[key];
+      if (!tmpl) return;
+      try {
+        const res = await fetch(tmpl.file);
+        let html = await res.text();
+        rawHTMLCache[key] = html;
+        renderPreview(html);
+        updateInfoPanel(tmpl);
+      } catch (e) {
+        console.error('Failed to load template:', e);
+      }
+    }
+
+    function renderPreview(html) {
+      const useTestData = document.getElementById('test-data-toggle')?.checked;
+      if (useTestData) {
+        Object.entries(TEST_DATA).forEach(([k, v]) => {
+          html = html.replace(new RegExp(k.replace(/[{}().]/g, '\\$&'), 'g'), v);
+        });
+      }
+      const area = document.getElementById('preview-area');
+      if (currentMode === 'desktop' || currentMode === 'mobile' || currentMode === 'dark') {
+        let width = currentMode === 'mobile' ? 375 : 700;
+        if (currentMode === 'mobile') {
+          area.innerHTML = `
+            <div class="preview-frame-mobile">
+              <div class="mobile-notch"></div>
+              <div class="mobile-screen"><iframe class="preview-iframe" id="preview-iframe" sandbox="allow-same-origin" style="width:100%;min-height:650px;border:none"></iframe></div>
+              <div class="mobile-home-bar"></div>
+            </div>`;
+        } else {
+          area.innerHTML = `
+            <div class="preview-frame-desktop" style="width:${width}px">
+              <div class="browser-chrome">
+                <div class="traffic-lights"><div class="traffic-light tl-red"></div><div class="traffic-light tl-yellow"></div><div class="traffic-light tl-green"></div></div>
+                <div class="url-bar">mail.google.com</div>
+              </div>
+              <iframe class="preview-iframe" id="preview-iframe" sandbox="allow-same-origin" style="min-height:650px;border:none;width:100%"></iframe>
+            </div>`;
+        }
+        const iframe = document.getElementById('preview-iframe');
+        if (iframe) {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          doc.open(); doc.write(html); doc.close();
+          iframe.onload = () => {
+            iframe.style.height = doc.body.scrollHeight + 'px';
+          };
+          setTimeout(() => { iframe.style.height = doc.body.scrollHeight + 'px'; }, 200);
+        }
+      } else if (currentMode === 'raw') {
+        const escaped = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        area.innerHTML = `<div class="raw-html-view" style="width:100%">${syntaxHighlight(escaped)}</div>`;
+      } else if (currentMode === 'plain') {
+        const plain = htmlToPlainText(html);
+        area.innerHTML = `<div class="plain-text-view">${plain}</div>`;
+      }
+    }
+
+    function syntaxHighlight(html) {
+      return html
+        .replace(/(&lt;\/?[\w-]+)/g, '<span style="color:#7c3aed">$1</span>')
+        .replace(/([\w-]+)(=)/g, '<span style="color:#22c55e">$1</span><span style="color:#e8e8f0">$2</span>')
+        .replace(/(".*?")/g, '<span style="color:#f59e0b">$1</span>')
+        .replace(/(&lt;!--.*?--&gt;)/g, '<span style="color:#6b6b8a">$1</span>');
+    }
+
+    function htmlToPlainText(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      const text = div.textContent || div.innerText || '';
+      return text.replace(/\n{3,}/g, '\n\n').trim().replace(/\n/g, '<br>');
+    }
+
+    function updateInfoPanel(tmpl) {
+      document.getElementById('info-template-name').textContent = tmpl.name;
+      document.getElementById('info-subject').textContent = tmpl.subject;
+      document.getElementById('info-trigger').textContent = tmpl.trigger;
+      document.getElementById('info-vars').innerHTML = tmpl.vars.map(v => `<span class="var-chip">${v}</span>`).join('');
+    }
+
+    // ---- Tab Switching ----
+    document.getElementById('template-tabs')?.addEventListener('click', (e) => {
+      const tab = e.target.closest('.template-tab');
+      if (!tab) return;
+      document.querySelectorAll('.template-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      loadTemplate(tab.dataset.template);
+    });
+
+    // ---- Preview Mode ----
+    document.getElementById('preview-mode')?.addEventListener('click', (e) => {
+      const pill = e.target.closest('.pill-option');
+      if (!pill) return;
+      document.querySelectorAll('#preview-mode .pill-option').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentMode = pill.dataset.mode;
+      const html = rawHTMLCache[currentTemplate] || '';
+      renderPreview(html);
+    });
+
+    // ---- Test Data Toggle ----
+    document.getElementById('test-data-toggle')?.addEventListener('change', () => {
+      const html = rawHTMLCache[currentTemplate] || '';
+      renderPreview(html);
+    });
+
+    // ---- Responsive Buttons ----
+    document.getElementById('responsive-buttons')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-width]');
+      if (!btn) return;
+      document.querySelectorAll('#responsive-buttons .btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const width = btn.dataset.width;
+      currentMode = 'desktop';
+      document.querySelectorAll('#preview-mode .pill-option').forEach(p => p.classList.remove('active'));
+      document.querySelector('#preview-mode .pill-option[data-mode="desktop"]')?.classList.add('active');
+      const html = rawHTMLCache[currentTemplate] || '';
+      const area = document.getElementById('preview-area');
+      const frameWidth = width === 'full' ? '100%' : width + 'px';
+      area.innerHTML = `
+        <div class="preview-frame-desktop" style="width:${frameWidth}">
+          <div class="browser-chrome">
+            <div class="traffic-lights"><div class="traffic-light tl-red"></div><div class="traffic-light tl-yellow"></div><div class="traffic-light tl-green"></div></div>
+            <div class="url-bar">mail.google.com — ${width === 'full' ? 'Full Width' : width + 'px'}</div>
+          </div>
+          <iframe class="preview-iframe" id="preview-iframe" sandbox="allow-same-origin" style="min-height:650px;border:none;width:100%"></iframe>
+        </div>`;
+      const useTestData = document.getElementById('test-data-toggle')?.checked;
+      let finalHtml = html;
+      if (useTestData) Object.entries(TEST_DATA).forEach(([k, v]) => { finalHtml = finalHtml.replace(new RegExp(k.replace(/[{}().]/g, '\\$&'), 'g'), v); });
+      const iframe = document.getElementById('preview-iframe');
+      if (iframe) { const d = iframe.contentDocument; d.open(); d.write(finalHtml); d.close(); setTimeout(() => { iframe.style.height = d.body.scrollHeight + 'px'; }, 200); }
+    });
+
+    // ---- Copy Functions ----
+    function showCopyToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'copy-toast';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2000);
+    }
+    document.getElementById('btn-copy-template')?.addEventListener('click', async () => {
+      const html = rawHTMLCache[currentTemplate] || '';
+      await navigator.clipboard.writeText(html);
+      showCopyToast('✓ Template HTML copied!');
+    });
+    document.getElementById('btn-copy-subject')?.addEventListener('click', async () => {
+      const subject = TEMPLATES[currentTemplate]?.subject || '';
+      await navigator.clipboard.writeText(subject);
+      showCopyToast('✓ Subject line copied!');
+    });
+    document.getElementById('btn-copy-html')?.addEventListener('click', async () => {
+      const html = rawHTMLCache[currentTemplate] || '';
+      await navigator.clipboard.writeText(html);
+      showCopyToast('✓ Full HTML copied!');
+    });
+
+    // ---- Theme Toggle ----
+    document.getElementById('btn-theme-toggle')?.addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

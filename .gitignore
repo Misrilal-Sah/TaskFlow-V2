@@ -1,0 +1,13 @@
+# Environment secrets — never commit these
+.env
+.env.local
+.env*.local
+
+# Supabase config (contains API keys — fill manually before deploying)
+js/supabase.js
+
+# Dependencies
+node_modules/
+
+# Cache / misc
+.cache_ggshield

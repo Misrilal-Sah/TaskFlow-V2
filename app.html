@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f0f17">
+  <meta name="description" content="TaskFlow — Your AI-powered task dashboard">
+  <title>TaskFlow — Dashboard</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/views.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- Offline Status Bar -->
+  <div id="offline-bar" class="offline-bar">
+    <svg class="icon-sm offline-bar-icon" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+    <span class="offline-bar-msg">You're offline. Changes will sync when you reconnect.</span>
+    <span class="offline-bar-badge" style="display:none"></span>
+  </div>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header" id="sidebar-brand" style="cursor:pointer" title="All Tasks">
+        <img src="assets/logo.png" alt="TaskFlow" class="sidebar-logo" style="border-radius:8px">
+        <span class="sidebar-title gradient-text">TaskFlow</span>
+      </div>
+      <nav class="sidebar-nav scroll-container"></nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user" id="sidebar-user">
+          <div class="avatar" id="user-avatar" style="background:var(--accent)">?</div>
+          <div class="sidebar-user-info" style="flex:1;min-width:0">
+            <div class="truncate" style="font-size:14px;font-weight:600" id="user-name">Loading...</div>
+            <div class="truncate text-xs text-muted" id="user-email">...</div>
+          </div>
+          <button class="btn btn-ghost btn-icon btn-sm" id="btn-logout" data-tooltip="Sign Out">
+            <svg class="icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="16 17 21 12 16 7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="12" x2="9" y2="12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-toggle" id="sidebar-toggle">
+        <svg class="icon-sm" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </aside>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="app-header" id="app-header"></header>
+
+      <!-- View Container -->
+      <div class="view-container scroll-container" id="view-container">
+        <div style="display:flex;flex-direction:column;gap:12px;padding:40px">
+          <div class="skeleton" style="height:32px;width:200px"></div>
+          <div class="skeleton" style="height:200px;width:100%"></div>
+          <div class="skeleton" style="height:60px;width:100%"></div>
+          <div class="skeleton" style="height:60px;width:100%"></div>
+          <div class="skeleton" style="height:60px;width:80%"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- AI Panel -->
+  <div class="ai-panel" id="ai-panel">
+    <div class="ai-panel-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <h4>AI Assistant</h4>
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" id="close-ai-panel">
+        <svg class="icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="ai-chat-messages scroll-container" id="ai-messages">
+      <div class="ai-message assistant">
+        <p>👋 Hi! I'm your TaskFlow AI assistant. I can help you:</p>
+        <ul style="margin-top:8px;padding-left:16px;list-style:disc">
+          <li>Generate tasks from goals</li>
+          <li>Suggest priorities & due dates</li>
+          <li>Create daily briefings</li>
+          <li>Expand task descriptions</li>
+        </ul>
+        <p style="margin-top:8px">How can I help you today?</p>
+      </div>
+    </div>
+    <div class="ai-input-area">
+      <input class="input" type="text" id="ai-input" placeholder="Ask AI anything...">
+      <button class="btn btn-primary btn-icon" id="ai-send">
+        <svg class="icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" id="fab-add" data-tooltip="New Task (N)">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+  </button>
+
+  <!-- Onboarding Overlay -->
+  <div class="onboarding-overlay" id="onboarding-overlay" style="display:none">
+    <div class="onboarding-card">
+      <!-- Step 1: Name -->
+      <div class="onboarding-step active">
+        <div style="font-size:48px;margin-bottom:16px">👋</div>
+        <h2 style="margin-bottom:8px">What should we call you?</h2>
+        <p style="color:var(--text-secondary);margin-bottom:24px">Let's personalize your experience</p>
+        <input class="input" type="text" id="onboarding-name" placeholder="Your name" style="max-width:300px;margin:0 auto">
+      </div>
+      <!-- Step 2: Avatar -->
+      <div class="onboarding-step">
+        <div style="font-size:48px;margin-bottom:16px">🎨</div>
+        <h2 style="margin-bottom:8px">Pick your avatar</h2>
+        <p style="color:var(--text-secondary);margin-bottom:16px">Choose a color that represents you</p>
+        <div class="avatar-picker">
+          <div class="avatar-option" data-color="#7c3aed" style="background:#7c3aed"></div>
+          <div class="avatar-option" data-color="#6366f1" style="background:#6366f1"></div>
+          <div class="avatar-option" data-color="#3b82f6" style="background:#3b82f6"></div>
+          <div class="avatar-option" data-color="#14b8a6" style="background:#14b8a6"></div>
+          <div class="avatar-option" data-color="#22c55e" style="background:#22c55e"></div>
+          <div class="avatar-option" data-color="#eab308" style="background:#eab308"></div>
+          <div class="avatar-option" data-color="#f97316" style="background:#f97316"></div>
+          <div class="avatar-option" data-color="#ef4444" style="background:#ef4444"></div>
+          <div class="avatar-option" data-color="#ec4899" style="background:#ec4899"></div>
+          <div class="avatar-option" data-color="#a855f7" style="background:#a855f7"></div>
+          <div class="avatar-option selected" data-color="#64748b" style="background:#64748b"></div>
+          <div class="avatar-option" data-color="#78716c" style="background:#78716c"></div>
+        </div>
+      </div>
+      <!-- Step 3: Theme -->
+      <div class="onboarding-step">
+        <div style="font-size:48px;margin-bottom:16px">✨</div>
+        <h2 style="margin-bottom:8px">Choose your theme</h2>
+        <p style="color:var(--text-secondary);margin-bottom:16px">You can change this anytime in settings</p>
+        <div class="theme-picker" id="onboarding-theme-picker"></div>
+      </div>
+      <!-- Progress & Buttons -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:32px">
+        <button class="btn btn-ghost" id="onboarding-back" style="visibility:hidden">Back</button>
+        <div class="onboarding-progress">
+          <div class="onboarding-dot active"></div>
+          <div class="onboarding-dot"></div>
+          <div class="onboarding-dot"></div>
+        </div>
+        <button class="btn btn-primary" id="onboarding-next">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav (mobile) -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div class="bottom-nav-item active" data-nav="board">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="3" width="5" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="17" y="3" width="5" height="15" rx="1" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Board</span>
+    </div>
+    <div class="bottom-nav-item" data-nav="list">
+      <svg class="icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
+      <span>List</span>
+    </div>
+    <div class="bottom-nav-item" data-nav="add" style="margin-top:-12px">
+      <div style="width:44px;height:44px;background:var(--accent-gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px var(--accent-glow)">
+        <svg class="icon" viewBox="0 0 24 24" style="color:#fff"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="bottom-nav-item" data-nav="stats">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="7" width="4" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="17" y="3" width="4" height="18" rx="1" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Stats</span>
+    </div>
+    <div class="bottom-nav-item" data-nav="settings">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Settings</span>
+    </div>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import './js/app.js';
+    import supabase from './js/supabase.js';
+    import auth from './js/auth.js';
+    import themeManager from './js/theme.js';
+    import ai from './js/ai.js';
+    import taskManager from './js/tasks.js';
+
+    // ---- Sidebar user info ----
+    (async () => {
+      await auth.init();
+      if (!auth.isAuthenticated()) { window.location.href = 'index.html'; return; }
+      const profile = await auth.getProfile();
+      const user = auth.getUser();
+      if (profile) {
+        document.getElementById('user-name').textContent = profile.name || user.email?.split('@')[0] || 'User';
+        document.getElementById('user-email').textContent = user.email || '';
+        const avatar = document.getElementById('user-avatar');
+        if (avatar) {
+          avatar.style.background = profile.avatar_color || 'var(--accent)';
+          avatar.textContent = profile.avatar_emoji || (profile.name || '?').charAt(0).toUpperCase();
+        }
+      }
+    })();
+
+    // ---- Logout ----
+    document.getElementById('btn-logout')?.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    // ---- Sidebar Toggle ----
+    document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+      window.taskflowApp?.toggleSidebar();
+    });
+
+    // ---- Sidebar Brand (logo/title) click → All Tasks ----
+    document.getElementById('sidebar-brand')?.addEventListener('click', () => {
+      const app = window.taskflowApp;
+      if (app) {
+        app.currentProject = null;
+        app.activeTab = 'all';
+        app.currentView = 'board';
+        app.renderView();
+        app.renderSidebar();
+      }
+    });
+
+    // ---- AI Panel ----
+    document.getElementById('close-ai-panel')?.addEventListener('click', () => {
+      document.getElementById('ai-panel')?.classList.remove('open');
+    });
+    document.getElementById('ai-send')?.addEventListener('click', sendAIMessage);
+    document.getElementById('ai-input')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendAIMessage();
+    });
+    async function sendAIMessage() {
+      const input = document.getElementById('ai-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      const container = document.getElementById('ai-messages');
+      container.innerHTML += `<div class="ai-message user">${msg}</div>`;
+      input.value = '';
+      container.innerHTML += `<div class="ai-message assistant" id="ai-typing"><span class="animate-pulse">Thinking...</span></div>`;
+      container.scrollTop = container.scrollHeight;
+      try {
+        const reply = await ai.chat(msg, taskManager.tasks);
+        document.getElementById('ai-typing').outerHTML = `<div class="ai-message assistant">${reply.replace(/\n/g,'<br>')}</div>`;
+      } catch (e) {
+        document.getElementById('ai-typing').outerHTML = `<div class="ai-message assistant" style="color:var(--error)">Error: ${e.message}</div>`;
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // ---- FAB ----
+    document.getElementById('fab-add')?.addEventListener('click', () => {
+      window.taskflowApp?.showAddTaskModal();
+    });
+
+    // ---- Bottom Nav ----
+    document.getElementById('bottom-nav')?.addEventListener('click', (e) => {
+      const item = e.target.closest('[data-nav]');
+      if (!item) return;
+      const nav = item.dataset.nav;
+      if (nav === 'add') { window.taskflowApp?.showAddTaskModal(); return; }
+      document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      if (window.taskflowApp) {
+        window.taskflowApp.currentView = nav;
+        window.taskflowApp.renderView();
+      }
+    });
+
+    // Register SW
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw/service-worker.js', { updateViaCache: 'none' })
+        .then(reg => {
+          // Force update if a new SW is waiting
+          reg.addEventListener('updatefound', () => {
+            const newSW = reg.installing;
+            if (newSW) {
+              newSW.addEventListener('statechange', () => {
+                if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New SW installed — skip waiting and reload for clean cache
+                  newSW.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            }
+          });
+        })
+        .catch(() => {});
+    }
+
+    // ---- Product Tour / Onboarding Walkthrough ----
+    (function() {
+      if (localStorage.getItem('taskflow-tour-done')) return;
+      const STEPS = [
+        {
+          selector: '.sidebar-nav',
+          title: '📌 Sidebar Navigation',
+          body: 'Use <strong>All Tasks</strong> and <strong>Today</strong> to quickly access your tasks. Click a project to filter.',
+          placement: 'right'
+        },
+        {
+          selector: '#btn-add-task, .fab',
+          title: '➕ Add a Task',
+          body: 'Click here (or press <kbd style="background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:11px">N</kbd>) to create a new task with priority, due date, and AI suggestions.',
+          placement: 'bottom'
+        },
+        {
+          selector: '[data-set-view], .view-switcher, .view-tabs',
+          title: '📋 Switch Views',
+          body: 'Switch between <strong>Board</strong>, <strong>List</strong>, <strong>Grid</strong>, <strong>Calendar</strong>, and <strong>Analytics</strong> views to visualize your work.',
+          placement: 'bottom'
+        },
+        {
+          selector: '#btn-ai',
+          title: '🤖 AI Assistant',
+          body: 'Chat with AI to <strong>generate tasks</strong> from goals, get priority suggestions, and create daily briefings.',
+          placement: 'bottom'
+        },
+        {
+          selector: '#btn-theme',
+          title: '🎨 Themes',
+          body: 'Pick from <strong>10 beautiful themes</strong> including Neon Night, Aurora Borealis, Sunset Warmth and more.',
+          placement: 'bottom'
+        },
+        {
+          selector: '.sidebar-footer, #sidebar-user',
+          title: '⚙️ Settings & Profile',
+          body: "That's it! Head to <strong>Settings</strong> to configure your Groq API key, change your name, and export your data.",
+          placement: 'top'
+        }
+      ];
+
+      let currentStep = 0;
+      let backdrop, spotlight, tooltip, currentHighlighted;
+
+      // Add tour CSS
+      const tourStyle = document.createElement('style');
+      tourStyle.textContent = `
+        .tour-backdrop{position:fixed;inset:0;z-index:9997;pointer-events:none}
+        .tour-tooltip{position:fixed;z-index:9999;background:var(--bg-card);border:1px solid var(--border-accent);border-radius:16px;padding:20px 22px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,0.5);pointer-events:all;animation:springIn 0.3s ease-out}
+        .tour-tooltip-step{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+        .tour-tooltip h4{font-size:16px;font-weight:700;margin-bottom:8px}
+        .tour-tooltip p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px}
+        .tour-tooltip-actions{display:flex;align-items:center;justify-content:space-between;gap:8px}
+        .tour-dots{display:flex;gap:5px;flex:1;justify-content:center}
+        .tour-dot{width:7px;height:7px;border-radius:50%;background:var(--bg-tertiary);transition:all 0.2s}
+        .tour-dot.active{background:var(--accent);width:20px;border-radius:4px}
+        .tour-btn-back{background:none;border:1px solid var(--border-primary);color:var(--text-secondary);padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+        .tour-btn-back:hover{border-color:var(--accent);color:var(--accent)}
+        .tour-btn-skip{background:none;border:none;color:var(--text-tertiary);font-size:12px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color 0.2s;white-space:nowrap}
+        .tour-btn-skip:hover{color:var(--error)}
+        .tour-btn-next{background:var(--accent-gradient);border:none;color:#fff;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+        .tour-btn-next:hover{opacity:0.9;transform:scale(1.04)}
+        .tour-highlighted{outline:3px solid var(--accent)!important;outline-offset:4px!important;border-radius:8px!important;box-shadow:0 0 0 6px rgba(124,58,237,0.2)!important;position:relative!important;z-index:9998!important;transition:outline 0.2s,box-shadow 0.2s}
+      `;
+      document.head.appendChild(tourStyle);
+
+      function getEl(sel) {
+        if (!sel) return null;
+        for (const s of sel.split(', ')) {
+          const el = document.querySelector(s);
+          if (el) return el;
+        }
+        return null;
+      }
+
+      function positionTooltip(targetRect, placement) {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const w = tooltip.offsetWidth || 300, h = tooltip.offsetHeight || 180;
+        let top, left;
+        const pad = 16;
+        if (placement === 'right') {
+          top = targetRect.top + (targetRect.height - h) / 2;
+          left = targetRect.right + pad;
+          if (left + w > vw - pad) { left = targetRect.left - w - pad; }
+        } else if (placement === 'bottom') {
+          top = targetRect.bottom + pad;
+          left = targetRect.left + (targetRect.width - w) / 2;
+        } else { // top
+          top = targetRect.top - h - pad;
+          left = targetRect.left + (targetRect.width - w) / 2;
+        }
+        top = Math.max(pad, Math.min(top, vh - h - pad));
+        left = Math.max(pad, Math.min(left, vw - w - pad));
+        tooltip.style.top = top + 'px';
+        tooltip.style.left = left + 'px';
+        tooltip.style.transform = 'none';
+      }
+
+      function clearHighlight() {
+        if (currentHighlighted) {
+          currentHighlighted.classList.remove('tour-highlighted');
+          currentHighlighted = null;
+        }
+      }
+
+      function showStep(idx) {
+        const step = STEPS[idx];
+        const el = getEl(step.selector);
+        const isLast = idx === STEPS.length - 1;
+        const isFirst = idx === 0;
+
+        // Highlight target element
+        clearHighlight();
+        if (el) {
+          el.classList.add('tour-highlighted');
+          currentHighlighted = el;
+          // Scroll target into view if needed
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Update spotlight
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const pad = 10;
+          spotlight.style.cssText = `position:fixed;top:${rect.top-pad}px;left:${rect.left-pad}px;width:${rect.width+pad*2}px;height:${rect.height+pad*2}px;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);z-index:9998;pointer-events:none;transition:all 0.35s cubic-bezier(0.16,1,0.3,1)`;
+        } else {
+          spotlight.style.cssText = `position:fixed;top:50%;left:50%;width:0;height:0;border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);z-index:9998;pointer-events:none`;
+        }
+
+        // Build tooltip HTML
+        tooltip.innerHTML = `
+          <div class="tour-tooltip-step">Step ${idx+1} of ${STEPS.length}</div>
+          <h4>${step.title}</h4>
+          <p>${step.body}</p>
+          <div class="tour-tooltip-actions">
+            ${isFirst 
+              ? `<button class="tour-btn-skip" id="tour-skip">Skip tour</button>`
+              : `<button class="tour-btn-back" id="tour-back">← Back</button>`
+            }
+            <div class="tour-dots">${STEPS.map((_,i)=>`<div class="tour-dot${i===idx?' active':''}"></div>`).join('')}</div>
+            <button class="tour-btn-next" id="tour-next">${isLast ? 'Finish 🎉' : 'Next →'}</button>
+          </div>`;
+
+        if (!isFirst) {
+          document.getElementById('tour-back').onclick = () => { currentStep--; showStep(currentStep); };
+        } else {
+          document.getElementById('tour-skip').onclick = endTour;
+        }
+        document.getElementById('tour-next').onclick = () => {
+          if (isLast) endTour();
+          else { currentStep++; showStep(currentStep); }
+        };
+
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          setTimeout(() => positionTooltip(rect, step.placement), 80);
+        } else {
+          tooltip.style.top = '50%';
+          tooltip.style.left = '50%';
+          tooltip.style.transform = 'translate(-50%,-50%)';
+        }
+      }
+
+      function endTour() {
+        localStorage.setItem('taskflow-tour-done', '1');
+        clearHighlight();
+        backdrop?.remove();
+        spotlight?.remove();
+        tooltip?.remove();
+        tourStyle?.remove();
+      }
+
+      function startTour() {
+        backdrop = document.createElement('div');
+        backdrop.className = 'tour-backdrop';
+        document.body.appendChild(backdrop);
+
+        spotlight = document.createElement('div');
+        document.body.appendChild(spotlight);
+
+        tooltip = document.createElement('div');
+        tooltip.className = 'tour-tooltip';
+        document.body.appendChild(tooltip);
+
+        showStep(0);
+      }
+
+      // Wait for app to fully initialize
+      setTimeout(startTour, 1800);
+    })();
+  </script>
+</body>
+</html>
