@@ -1,133 +1,211 @@
-# TaskFlow — AI-Powered Todo App ✨
+<p align="center">
+    <img src="https://capsule-render.vercel.app/api?type=venom&height=260&color=0:6366f1,25:a855f7,50:ec4899,75:f43f5e,100:f97316&text=TaskFlow&fontColor=ffffff&fontSize=68&animation=fadeIn&stroke=ffffff&strokeWidth=1&desc=AI-Powered%20Offline-First%20Todo%20Experience&descAlignY=66&descSize=18&descColor=ffffffcc" alt="TaskFlow header" />
+</p>
 
-> A modern, offline-first, AI-powered task manager built with vanilla HTML/CSS/JS, Supabase, and Groq API.
+<p align="center">
+    <a href="#-live-highlights"><img src="https://img.shields.io/badge/Offline%20First-IndexedDB%20%2B%20Service%20Worker-6366f1?style=for-the-badge&logo=pwa&logoColor=white" alt="Offline First" /></a>
+    <a href="#-ai-capabilities"><img src="https://img.shields.io/badge/AI-Groq%20%2B%20Llama%203.3%2070B-a855f7?style=for-the-badge&logo=openai&logoColor=white" alt="AI Stack" /></a>
+    <a href="#-tech-stack"><img src="https://img.shields.io/badge/Frontend-Vanilla%20JS%20ES6%2B-ec4899?style=for-the-badge&logo=javascript&logoColor=white" alt="Frontend" /></a>
+    <a href="#-deployment--security"><img src="https://img.shields.io/badge/Hosted%20On-Vercel-f97316?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" /></a>
+</p>
 
-## ⚡ Stack
+<h3 align="center">A polished, intelligent task command center built for speed, clarity, and reliability.</h3>
+
+<p align="center">
+TaskFlow combines clean design, robust offline behavior, realtime sync, and AI-assisted planning in a single vanilla HTML/CSS/JS app.
+</p>
+
+---
+
+## ✨ Live Highlights
+
+- Offline-first architecture with Service Worker app shell caching + IndexedDB persistence
+- Smart sync queue with retry flow when reconnecting
+- Supabase auth with offline-safe cached session and profile fallbacks
+- Drag-and-drop task movement, project organization, and multi-view workflow control
+- Built-in analytics dashboard, focus mode, Pomodoro timer, and reminders
+- AI assistant with personal API key support and secure server proxy fallback
+
+## 🧠 AI Capabilities
+
+TaskFlow ships with 10 practical AI workflows:
+
+1. Generate Tasks from a goal
+2. NLP Quick Add parsing
+3. Smart Priority suggestion
+4. Auto-Describe task expansion
+5. Daily Briefing generation
+6. AI Chat over your task context
+7. Due Date Suggestion
+8. Mood-based Recommendations
+9. Weekly Review summaries
+10. Difficulty Estimation with tips
+
+Default model: Llama 3.3 70B Versatile via Groq.
+
+If a user has no personal key configured, TaskFlow can call a server-side proxy endpoint at api/groq using GROQ_API_KEY in Vercel environment variables.
+
+## 🛠 Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | Pure HTML5, CSS3, Vanilla JS ES6+ |
-| Backend | Supabase (Postgres, Auth, Realtime, RLS) |
-| AI | Groq API + LLaMA 3 8B |
-| Auth | Email/Password + Google OAuth |
-| Offline | Service Worker + IndexedDB |
-| Hosting | Vercel (static) |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JS ES6+ |
+| Data + Auth | Supabase (Postgres, Auth, RLS, Realtime) |
+| AI | Groq API (Llama 3.3 70B Versatile) |
+| Offline | Service Worker, IndexedDB, localStorage caching |
+| Deployment | Vercel (clean URLs + rewrites + redirects) |
+
+## 🧩 Experience Surface
+
+Views available in-app:
+
+- Board
+- List
+- Grid
+- Calendar
+- Timeline
+- Focus Mode
+- Eisenhower Matrix
+- Analytics
+
+Additional productivity flow:
+
+- Keyboard shortcuts for fast navigation
+- Theme engine with 10 visual themes
+- Onboarding flow for first-time users
+- Notification reminders and offline status awareness
+- Export tasks as JSON from settings
+
+## 🏗 Architecture Snapshot
+
+```mermaid
+flowchart LR
+        U[User Browser] --> A[index.html / app.html]
+        A --> SW[Service Worker Cache Layer]
+        A --> IDB[IndexedDB + Local Cache]
+        A --> SUPA[Supabase Auth + DB + Realtime]
+        A --> AI[Groq API]
+        A --> PX[api/groq Proxy]
+        PX --> AI
+        IDB --> SQ[Offline Sync Queue]
+        SQ --> SUPA
+```
 
 ## 📁 Project Structure
 
-```
-├── index.html              Auth/landing page
-├── app.html                Main app (protected)
-├── emails-preview.html     Email template admin 
-├── vercel.json             Deployment config
-├── assets/
-│   ├── logo.svg            Brand logo
-│   └── icons.svg           SVG icon sprite (55+ icons)
-├── css/
-│   ├── reset.css           Browser reset
-│   ├── variables.css       10 themes + design tokens
-│   ├── base.css            Typography & utilities
-│   ├── components.css      UI component library
-│   ├── views.css           View/layout-specific styles
-│   ├── animations.css      30+ keyframe animations
-│   └── responsive.css      300px to 4K responsive
-├── js/
-│   ├── supabase.js         Client init
-│   ├── auth.js             Auth (signup/login/OAuth/reset)
-│   ├── db.js               CRUD + IndexedDB offline sync
-│   ├── tasks.js            Task management + realtime
-│   ├── projects.js         Project CRUD + hierarchy
-│   ├── ui.js               Toast, modal, confetti, renderers
-│   ├── ai.js               10 AI features via Groq
-│   ├── timer.js            Pomodoro timer + tracking
-│   ├── notifications.js    Push notifications + reminders
-│   ├── theme.js            10-theme engine + realtime sync
-│   ├── sync.js             Offline queue processor
-│   ├── stats.js            Analytics + Canvas charts
-│   └── app.js              Main orchestrator
-├── emails/
-│   ├── email-variables.css Shared email tokens
-│   ├── confirm-signup.html
-│   ├── reset-password.html
-│   ├── change-email.html
-│   └── magic-link.html
-└── sw/
-    └── service-worker.js   Offline-first caching
+```text
+.
+|-- index.html
+|-- app.html
+|-- emails-preview.html
+|-- api/
+|   `-- groq.js
+|-- assets/
+|   `-- supabase-sdk.js
+|-- css/
+|   |-- reset.css
+|   |-- variables.css
+|   |-- base.css
+|   |-- components.css
+|   |-- views.css
+|   |-- animations.css
+|   `-- responsive.css
+|-- emails/
+|   |-- email-variables.css
+|   |-- confirm-signup.html
+|   |-- reset-password.html
+|   |-- change-email.html
+|   `-- magic-link.html
+|-- js/
+|   |-- supabase.js
+|   |-- auth.js
+|   |-- db.js
+|   |-- tasks.js
+|   |-- projects.js
+|   |-- ui.js
+|   |-- ai.js
+|   |-- timer.js
+|   |-- notifications.js
+|   |-- theme.js
+|   |-- sync.js
+|   |-- stats.js
+|   `-- app.js
+|-- sw/
+|   `-- service-worker.js
+|-- supabase-schema.sql
+`-- vercel.json
 ```
 
 ## 🚀 Quick Start
 
-### 1. Supabase Setup
+### 1. Create Supabase Project
 
-1. Create a [Supabase](https://supabase.com) project
-2. Run the SQL in `supabase-schema.sql` in the SQL Editor
-3. Enable Google OAuth in Authentication → Providers
-4. Copy your email templates from `/emails/` into Supabase → Auth → Email Templates
+1. Create a new Supabase project.
+2. Run supabase-schema.sql in SQL Editor.
+3. Enable Google OAuth in Authentication > Providers.
+4. Copy files from emails/ into Supabase Auth email templates.
 
-### 2. Configure
+### 2. Configure Client Keys
 
-Update `js/supabase.js` with your credentials:
+Update values in js/supabase.js:
 
 ```javascript
 const SUPABASE_URL = 'https://your-project.supabase.co';
 const SUPABASE_ANON_KEY = 'your-anon-key';
 ```
 
-### 3. Deploy to Vercel
+### 3. Configure AI Fallback Key (Optional but Recommended)
+
+In Vercel project settings, add:
+
+```bash
+GROQ_API_KEY=your_server_side_key
+```
+
+This powers api/groq when users do not provide their own key in settings.
+
+### 4. Deploy
 
 ```bash
 npx vercel
 ```
 
-Or connect your GitHub repo to Vercel for automatic deployments.
+## 🔐 Deployment + Security
 
-### 4. Add Groq API Key
+Current deployment config includes:
 
-After signing in, go to **Settings → AI** and enter your [Groq API key].
+- Clean URLs and route rewrites (for app and email preview)
+- Security headers like X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+- Strong cache-control strategy for static assets and HTML revalidation
 
-## 🎨 Themes
-
-- 🌑 Dark Obsidian (default)
-- ☀️ Light Ivory
-- 🌊 Ocean Depths
-- 🌹 Rose Gold
-- ⚡ Cyberpunk
-- and many more
-
-## 🤖 AI Features
-
-1. **Generate Tasks** — Break goals into actionable items
-2. **NLP Quick Add** — Natural language task creation
-3. **Smart Priority** — AI-suggested priorities
-4. **Auto-Describe** — Expand task descriptions
-5. **Daily Briefing** — Morning summary + motivation
-6. **AI Chat** — Ask anything about your tasks
-7. **Due Date Suggest** — Smart deadline recommendations
-8. **Mood Recommendations** — Tasks based on how you feel
-9. **Weekly Review** — Automated weekly summary
-10. **Difficulty Estimation** — Effort prediction + tips
-
-## 📱 Views
-
-Board · List · Grid · Calendar · Timeline · Focus Mode · Eisenhower Matrix · Analytics
-
-## ⌨️ Keyboard Shortcuts
+## ⌨ Keyboard Shortcuts
 
 | Key | Action |
-|-----|--------|
-| `N` | New task |
-| `1-4` | Switch view |
-| `F` | Focus mode |
-| `S` | Settings |
-| `A` | Analytics |
-| `Ctrl+K` | Search |
-| `?` | Show shortcuts |
+|---|---|
+| N | New task |
+| 1-4 | Switch view |
+| F | Focus mode |
+| S | Settings |
+| A | Analytics |
+| Ctrl+K | Search |
+| ? | Show shortcuts |
 
-## 📧 Email Admin
+## 📧 Email Template Studio
 
-Visit `/emails-preview.html` (PIN: `1234`) to preview all transactional email templates with:
-- Desktop & mobile preview
+Open emails-preview.html and enter PIN 1234 to preview transactional templates with:
+
+- Desktop/mobile preview
 - Dark mode simulation
-- Plain text view
+- Plain text version
 - Raw HTML inspection
 - Responsive width testing
+
+---
+
+<p align="center">
+    <b>TaskFlow</b> • Designed for beautiful productivity under real-world network conditions.
+</p>
+
+<p align="center">
+    <img src="https://capsule-render.vercel.app/api?type=rect&height=120&color=0:6366f1,25:a855f7,50:ec4899,75:f43f5e,100:f97316&section=footer&text=Build%20Less%20Friction.%20Ship%20More%20Focus.&fontColor=ffffff&fontSize=22" alt="TaskFlow footer" />
+</p>
