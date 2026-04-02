@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0f0f17">
+  <meta name="theme-color" content="#07071A">
   <meta name="description" content="TaskFlow — AI-powered todo app. Organize your life with smart task management, offline support, and beautiful analytics.">
   <title>TaskFlow — AI-Powered Task Manager</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
@@ -13,1112 +13,791 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <style>
-    *{font-family:'Inter',system-ui,sans-serif}
+    *{font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 
-    /* ---- Navbar ---- */
-    .navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;transition:all 0.3s}
-    .navbar.scrolled{background:rgba(15,15,23,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-primary);padding:12px 32px}
-    .navbar-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .navbar-brand img{width:36px;height:36px;object-fit: contain}
-    .navbar-brand span{font-size:20px;font-weight:800}
-    .navbar-links{display:flex;align-items:center;gap:32px}
-    .navbar-link{color:var(--text-secondary);font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;transition:color 0.2s}
-    .navbar-link:hover{color:var(--text-primary)}
-    .navbar-cta{display:flex;gap:8px}
+    /* ======== NAVBAR ======== */
+    .navbar{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:500;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:32px;border-radius:999px;background:rgba(7,7,26,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:all 0.3s;width:min(1100px,calc(100% - 32px))}
+    .navbar.scrolled{background:rgba(7,7,26,0.92);border-color:rgba(139,92,246,0.25);box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(139,92,246,0.1)}
+    .navbar-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .navbar-brand img{width:34px;height:34px;object-fit:contain;border-radius:10px;box-shadow:0 0 12px rgba(139,92,246,0.5)}
+    .navbar-brand span{font-size:18px;font-weight:800;background:linear-gradient(135deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .navbar-links{display:flex;align-items:center;gap:6px}
+    .navbar-link{color:rgba(160,160,200,0.85);font-size:13.5px;font-weight:500;text-decoration:none;cursor:pointer;transition:color 0.2s;padding:6px 12px;border-radius:8px}
+    .navbar-link:hover{color:#F0F0FF;background:rgba(139,92,246,0.1)}
+    .navbar-cta{display:flex;gap:8px;flex-shrink:0}
 
-    /* ---- Hero ---- */
+    /* ======== HERO ======== */
     .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
-    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(124,58,237,0.12),transparent 60%)}
-    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);border-radius:100px;font-size:13px;font-weight:600;color:var(--accent);margin-bottom:24px;animation:fadeSlideIn 0.6s ease-out}
-    .hero-badge .pulse-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
-    .hero h1{font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.05;margin-bottom:20px;animation:fadeSlideIn 0.6s ease-out 0.1s both}
-    .hero h1 .gradient-word{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub{font-size:clamp(16px,2vw,20px);color:var(--text-secondary);max-width:600px;line-height:1.7;margin:0 auto 40px;animation:fadeSlideIn 0.6s ease-out 0.2s both}
-    .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fadeSlideIn 0.6s ease-out 0.3s both}
-    .hero-cta .btn-primary{padding:14px 36px;font-size:16px;font-weight:700;border-radius:14px;box-shadow:0 4px 20px var(--accent-glow)}
-    .hero-cta .btn-secondary{padding:14px 28px;font-size:16px;font-weight:600;border-radius:14px}
-    .hero-stats{display:flex;gap:48px;justify-content:center;margin-top:60px;animation:fadeSlideIn 0.6s ease-out 0.4s both}
+    .hero-aurora{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+    .hero-orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:0.15;animation:orbFloat 18s ease-in-out infinite}
+    .hero-orb-1{width:700px;height:700px;background:#8B5CF6;top:-200px;left:-150px;animation-duration:20s}
+    .hero-orb-2{width:600px;height:600px;background:#EC4899;bottom:-200px;right:-150px;animation-duration:16s;animation-delay:-8s;opacity:0.12}
+    .hero-orb-3{width:400px;height:400px;background:#06B6D4;top:40%;right:-100px;animation-duration:14s;animation-delay:-5s;opacity:0.08}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(139,92,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent)}
+    .hero-content{position:relative;z-index:1;max-width:860px}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);border-radius:999px;font-size:13px;font-weight:600;color:#8B5CF6;margin-bottom:28px;animation:fadeSlideIn 0.6s ease-out;cursor:default}
+    .hero-badge .pulse-dot{width:7px;height:7px;background:#8B5CF6;border-radius:50%;animation:pulseDot 1.5s ease-in-out infinite;box-shadow:0 0 8px #8B5CF6}
+    .hero h1{font-size:clamp(40px,7vw,80px);font-weight:900;line-height:1.04;margin-bottom:22px;letter-spacing:-0.03em;animation:fadeSlideIn 0.6s ease-out 0.1s both;color:#F0F0FF}
+    .hero h1 .word-gradient{background:linear-gradient(135deg,#8B5CF6 0%,#EC4899 60%,#06B6D4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:clamp(16px,2vw,20px);color:#A0A0C8;max-width:620px;line-height:1.75;margin:0 auto 44px;animation:fadeSlideIn 0.6s ease-out 0.2s both}
+    .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeSlideIn 0.6s ease-out 0.3s both}
+    .hero-cta .btn-primary{padding:15px 36px;font-size:16px;font-weight:700;border-radius:14px;box-shadow:0 6px 28px rgba(139,92,246,0.5)}
+    .hero-cta .btn-secondary-outline{padding:14px 28px;font-size:15px;font-weight:600;border-radius:14px;background:transparent;border:1.5px solid rgba(255,255,255,0.12);color:#F0F0FF;cursor:pointer;transition:all 0.2s}
+    .hero-cta .btn-secondary-outline:hover{background:rgba(255,255,255,0.05);border-color:rgba(139,92,246,0.4)}
+    .hero-stats{display:flex;gap:64px;justify-content:center;margin-top:72px;animation:fadeSlideIn 0.6s ease-out 0.45s both;flex-wrap:wrap}
     .hero-stat{text-align:center}
-    .hero-stat-value{font-size:28px;font-weight:800;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-stat-label{font-size:13px;color:var(--text-tertiary);margin-top:4px}
-    .hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:0.15;pointer-events:none}
-    .hero-glow-1{background:#7c3aed;top:-200px;left:-100px;animation:float 10s ease-in-out infinite}
-    .hero-glow-2{background:#6366f1;bottom:-200px;right:-100px;animation:float 10s ease-in-out infinite 3s}
-    .hero-glow-3{background:#34d399;top:50%;right:-200px;animation:float 8s ease-in-out infinite 5s}
+    .hero-stat-value{font-size:clamp(24px,4vw,36px);font-weight:900;background:linear-gradient(135deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+    .hero-stat-label{font-size:12px;color:#5E5E8A;margin-top:5px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase}
+    .hero-divider{width:1px;height:40px;background:rgba(255,255,255,0.08);align-self:center}
 
-    /* ---- Feature Carousel ---- */
-    .features-section{padding:80px 24px;max-width:1200px;margin:0 auto}
-    .section-header{text-align:center;margin-bottom:60px}
-    .section-badge{display:inline-flex;align-items:center;padding:6px 14px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);border-radius:100px;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
-    .section-header h2{font-size:clamp(28px,4vw,44px);font-weight:800;margin-bottom:12px}
-    .section-header p{color:var(--text-secondary);font-size:clamp(15px,1.5vw,18px);max-width:500px;margin:0 auto}
-    .carousel-wrapper{position:relative;overflow:hidden;border-radius:var(--radius-xl);margin-bottom:40px}
-    .carousel-track{display:flex;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);will-change:transform}
-    .carousel-slide{min-width:100%;padding:48px;background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:var(--radius-xl);display:flex;align-items:center;gap:48px}
-    .carousel-slide-content{flex:1;text-align:left}
-    .carousel-slide-icon{width:64px;height:64px;background:var(--accent-light);border-radius:16px;display:flex;align-items:center;justify-content:center;color:var(--accent);margin-bottom:20px;font-size:28px}
-    .carousel-slide-content h3{font-size:24px;font-weight:800;margin-bottom:12px}
-    .carousel-slide-content p{color:var(--text-secondary);line-height:1.7;margin-bottom:20px}
-    .carousel-slide-visual{flex:1;aspect-ratio:4/3;background:var(--bg-tertiary);border-radius:var(--radius-lg);border:1px solid var(--border-secondary);overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
-    .mock-ui{width:90%;padding:16px}
-    .mock-task{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:10px;margin-bottom:8px;animation:fadeSlideIn 0.5s ease-out both}
-    .mock-task:nth-child(2){animation-delay:0.15s}
-    .mock-task:nth-child(3){animation-delay:0.3s}
-    .mock-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--accent);flex-shrink:0}
-    .mock-check.done{background:var(--accent);position:relative}
-    .mock-check.done::after{content:'✓';color:#fff;font-size:12px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-    .mock-task-text{flex:1;font-size:13px;font-weight:500}
-    .mock-task-text.done{text-decoration:line-through;opacity:0.5}
-    .mock-badge{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
-    .mock-badge--high{background:rgba(239,68,68,0.15);color:#ef4444}
-    .mock-badge--ai{background:rgba(124,58,237,0.15);color:#7c3aed}
-    .mock-badge--done{background:rgba(34,197,94,0.15);color:#22c55e}
-    .carousel-dots{display:flex;gap:8px;justify-content:center}
-    .carousel-dot{width:10px;height:10px;border-radius:50%;background:var(--bg-tertiary);border:none;cursor:pointer;transition:all 0.3s}
-    .carousel-dot.active{background:var(--accent);width:32px;border-radius:5px}
-    .carousel-arrows{position:absolute;top:50%;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;transform:translateY(-50%);pointer-events:none;z-index:2}
-    .carousel-arrow{width:40px;height:40px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:all;transition:all 0.2s;box-shadow:var(--shadow-md)}
-    .carousel-arrow:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .carousel-arrow svg{width:18px;height:18px}
+    /* ======== SECTION COMMON ======== */
+    .section-wrapper{padding:100px 24px;max-width:1200px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:64px}
+    .section-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);border-radius:999px;font-size:11px;font-weight:700;color:#8B5CF6;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:18px}
+    .section-header h2{font-size:clamp(28px,4.5vw,48px);font-weight:800;margin-bottom:14px;color:#F0F0FF;letter-spacing:-0.02em}
+    .section-header p{color:#A0A0C8;font-size:clamp(15px,1.5vw,18px);max-width:520px;margin:0 auto;line-height:1.7}
 
-    /* ---- Feature Grid ---- */
-    .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:0 24px 80px;max-width:1200px;margin:0 auto}
-    .feature-grid-card{padding:32px;background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:var(--radius-xl);transition:all 0.3s;cursor:default}
-    .feature-grid-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 30px rgba(124,58,237,0.08)}
-    .feature-grid-icon{width:48px;height:48px;background:var(--accent-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px}
-    .feature-grid-card h4{font-size:16px;font-weight:700;margin-bottom:8px}
-    .feature-grid-card p{font-size:14px;color:var(--text-tertiary);line-height:1.6}
+    /* ======== BENTO FEATURE GRID ======== */
+    .bento-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    .bento-card{background:rgba(16,16,38,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden;cursor:default;backdrop-filter:blur(12px)}
+    .bento-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:inherit}
+    .bento-card:hover{border-color:rgba(139,92,246,0.35);transform:translateY(-4px);box-shadow:0 0 32px rgba(139,92,246,0.2),0 8px 32px rgba(0,0,0,0.4)}
+    .bento-card:hover::before{opacity:1}
+    .bento-1{grid-column:span 7;background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(16,16,38,0.8))}
+    .bento-1::before{background:linear-gradient(135deg,rgba(139,92,246,0.08),transparent)}
+    .bento-2{grid-column:span 5;background:linear-gradient(135deg,rgba(236,72,153,0.1),rgba(16,16,38,0.8))}
+    .bento-2::before{background:linear-gradient(135deg,rgba(236,72,153,0.06),transparent)}
+    .bento-3{grid-column:span 4;background:linear-gradient(135deg,rgba(6,182,212,0.1),rgba(16,16,38,0.8))}
+    .bento-3::before{background:linear-gradient(135deg,rgba(6,182,212,0.06),transparent)}
+    .bento-4{grid-column:span 4;background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(16,16,38,0.8))}
+    .bento-4::before{background:linear-gradient(135deg,rgba(245,158,11,0.06),transparent)}
+    .bento-5{grid-column:span 4;background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,16,38,0.8))}
+    .bento-5::before{background:linear-gradient(135deg,rgba(16,185,129,0.06),transparent)}
+    .bento-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+    .bento-icon-1{background:rgba(139,92,246,0.15);color:#8B5CF6}
+    .bento-icon-2{background:rgba(236,72,153,0.15);color:#EC4899}
+    .bento-icon-3{background:rgba(6,182,212,0.15);color:#06B6D4}
+    .bento-icon-4{background:rgba(245,158,11,0.15);color:#F59E0B}
+    .bento-icon-5{background:rgba(16,185,129,0.15);color:#10B981}
+    .bento-icon svg{width:26px;height:26px}
+    .bento-card h3{font-size:20px;font-weight:700;color:#F0F0FF;margin-bottom:10px}
+    .bento-card p{font-size:14px;color:#A0A0C8;line-height:1.65}
+    .bento-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;margin-top:16px}
+    .bento-mock{margin-top:20px;background:rgba(7,7,26,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;overflow:hidden}
+    .mock-task-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;margin-bottom:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);font-size:13px;color:#A0A0C8;transition:all 0.2s}
+    .mock-task-row:hover{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#F0F0FF}
+    .mock-check-box{width:18px;height:18px;border-radius:5px;border:2px solid rgba(139,92,246,0.5);flex-shrink:0}
+    .mock-check-box.done{background:linear-gradient(135deg,#8B5CF6,#EC4899);border-color:transparent;position:relative}
+    .mock-check-box.done::after{content:'';position:absolute;inset:3px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat}
+    .mock-pill{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;flex-shrink:0}
+    .mock-pill-p{background:rgba(239,68,68,0.15);color:#EF4444}
+    .mock-pill-ai{background:rgba(139,92,246,0.15);color:#8B5CF6}
+    .mock-pill-done{background:rgba(16,185,129,0.15);color:#10B981}
 
-    /* ---- CTA Section ---- */
-    .cta-section{padding:100px 24px;text-align:center;position:relative;overflow:hidden}
-    .cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(124,58,237,0.08),transparent)}
-    .cta-section h2{font-size:clamp(28px,4vw,48px);font-weight:900;margin-bottom:16px}
-    .cta-section p{color:var(--text-secondary);font-size:18px;margin-bottom:32px}
+    /* ======== AI SECTION ======== */
+    .ai-section{padding:80px 24px;background:linear-gradient(180deg,transparent,rgba(139,92,246,0.05),transparent);position:relative;overflow:hidden}
+    .ai-content{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+    .ai-visual{background:rgba(13,13,42,0.9);border:1px solid rgba(139,92,246,0.25);border-radius:24px;padding:28px;backdrop-filter:blur(12px);box-shadow:0 0 40px rgba(139,92,246,0.15)}
+    .ai-chat-item{display:flex;gap:12px;margin-bottom:16px;align-items:flex-end}
+    .ai-chat-item.user{flex-direction:row-reverse}
+    .ai-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+    .ai-avatar-ai{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;box-shadow:0 0 12px rgba(139,92,246,0.4)}
+    .ai-avatar-user{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);color:#A0A0C8}
+    .ai-bubble{padding:12px 16px;border-radius:14px;font-size:13.5px;line-height:1.6;max-width:75%}
+    .ai-bubble-ai{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);color:#D0D0F0;border-bottom-left-radius:4px}
+    .ai-bubble-user{background:linear-gradient(135deg,rgba(139,92,246,0.25),rgba(236,72,153,0.25));border:1px solid rgba(139,92,246,0.3);color:#F0F0FF;border-bottom-right-radius:4px}
+    .ai-typing{display:flex;gap:4px;padding:14px 16px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);border-radius:14px;border-bottom-left-radius:4px}
+    .ai-typing span{width:7px;height:7px;background:#8B5CF6;border-radius:50%;animation:bounce 1.4s infinite}
+    .ai-typing span:nth-child(2){animation-delay:0.15s}
+    .ai-typing span:nth-child(3){animation-delay:0.3s}
 
-    /* ---- Footer ---- */
-    .landing-footer{padding:32px 24px;border-top:1px solid var(--border-primary);text-align:center;color:var(--text-tertiary);font-size:13px}
+    /* ======== STATS STRIP ======== */
+    .stats-strip{padding:60px 24px;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(13,13,42,0.5)}
+    .stats-strip-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+    .strip-stat{text-align:center}
+    .strip-value{font-size:clamp(28px,4vw,42px);font-weight:900;line-height:1;background:linear-gradient(135deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .strip-label{font-size:13px;color:#5E5E8A;margin-top:6px;font-weight:500;letter-spacing:0.04em}
+    .strip-divider{width:1px;background:rgba(255,255,255,0.07);align-self:stretch;margin:auto 0}
 
-    /* ---- Auth Modal (overlays on landing) ---- */
-    .auth-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all 0.3s;padding:20px}
-    .auth-modal-overlay.active{opacity:1;visibility:visible}
-    .auth-modal{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-xl);max-width:460px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.4);animation:springIn 0.4s ease-out;padding:36px}
-    .auth-modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--bg-tertiary);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);transition:all 0.2s}
-    .auth-modal-close:hover{background:var(--error);color:#fff}
-    .auth-modal-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
-    .auth-modal-logo img{width:36px;height:36px}
-    .auth-modal-logo span{font-size:20px;font-weight:800}
-    .auth-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border-primary)}
-    .auth-tab{flex:1;padding:12px;text-align:center;font-weight:600;font-size:14px;color:var(--text-tertiary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s}
-    .auth-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-    .auth-form{display:none;animation:fadeSlideIn 0.35s ease-out}
-    .auth-form.active{display:block}
-    .auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text-tertiary);font-size:13px}
-    .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border-primary)}
-    .auth-links{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:13px}
-    .auth-links a{color:var(--accent);cursor:pointer;text-decoration:none}
-    .auth-links a:hover{text-decoration:underline}
-    .auth-success{display:none;text-align:center;animation:springIn 0.5s ease-out}
-    .auth-success.active{display:block}
-    .auth-success-icon{width:72px;height:72px;margin:0 auto 16px;background:rgba(34,197,94,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center}
-    .auth-success-icon svg{width:36px;height:36px;color:#22c55e}
-
-    /* ---- FAQ Section ---- */
-    .faq-section{padding:80px 24px;max-width:860px;margin:0 auto}
-    .faq-item{border:1px solid var(--border-primary);border-radius:var(--radius-lg);margin-bottom:12px;overflow:hidden;transition:all 0.2s}
-    .faq-item.open{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-    .faq-question{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;cursor:pointer;font-weight:600;font-size:15px;transition:all 0.2s;gap:12px}
-    .faq-question:hover{color:var(--accent)}
-    .faq-chevron{width:20px;height:20px;flex-shrink:0;color:var(--text-tertiary);transition:transform 0.3s;stroke:currentColor;fill:none}
-    .faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--accent)}
+    /* ======== FAQ ======== */
+    .faq-section{padding:80px 24px;max-width:820px;margin:0 auto}
+    .faq-item{border:1px solid rgba(255,255,255,0.07);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:all 0.25s;background:rgba(16,16,38,0.6)}
+    .faq-item.open{border-color:rgba(139,92,246,0.4);box-shadow:0 0 20px rgba(139,92,246,0.1)}
+    .faq-question{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;cursor:pointer;font-weight:600;font-size:15px;color:#D0D0F0;transition:color 0.2s;gap:12px;user-select:none}
+    .faq-question:hover{color:#8B5CF6}
+    .faq-chevron{width:18px;height:18px;flex-shrink:0;color:#5E5E8A;transition:transform 0.3s,color 0.2s}
+    .faq-item.open .faq-chevron{transform:rotate(180deg);color:#8B5CF6}
     .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1)}
-    .faq-item.open .faq-answer{max-height:300px}
-    .faq-answer-inner{padding:0 24px 20px;color:var(--text-secondary);font-size:14px;line-height:1.7}
+    .faq-item.open .faq-answer{max-height:280px}
+    .faq-answer-inner{padding:0 24px 20px;color:#A0A0C8;font-size:14px;line-height:1.75}
 
-    /* ---- Contact Section ---- */
-    .contact-section{padding:40px 24px 80px;max-width:860px;margin:0 auto}
-    .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:32px}
-    .contact-card{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:var(--radius-xl);padding:32px;text-align:center;transition:all 0.3s}
-    .contact-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 30px rgba(124,58,237,0.08)}
-    .contact-card-icon{width:52px;height:52px;background:var(--accent-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--accent)}
-    .contact-card h4{font-size:16px;font-weight:700;margin-bottom:6px}
-    .contact-card p{font-size:13px;color:var(--text-tertiary);margin-bottom:12px}
-    .contact-card a{color:var(--accent);font-size:14px;font-weight:600;text-decoration:none}
-    .contact-card a:hover{text-decoration:underline}
+    /* ======== CONTACT ======== */
+    .contact-section{padding:40px 24px 80px;max-width:820px;margin:0 auto}
+    .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:32px}
+    .contact-card{background:rgba(16,16,38,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:30px;text-align:center;transition:all 0.3s;cursor:default;backdrop-filter:blur(12px)}
+    .contact-card:hover{border-color:rgba(139,92,246,0.4);transform:translateY(-4px);box-shadow:0 8px 32px rgba(139,92,246,0.15)}
+    .contact-icon{width:52px;height:52px;background:rgba(139,92,246,0.12);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#8B5CF6}
+    .contact-card h4{font-size:16px;font-weight:700;color:#F0F0FF;margin-bottom:6px}
+    .contact-card p{font-size:13px;color:#5E5E8A;margin-bottom:12px}
+    .contact-card a{color:#8B5CF6;font-size:14px;font-weight:600;text-decoration:none;transition:color 0.2s}
+    .contact-card a:hover{color:#EC4899}
 
-    /* ---- TOS shake animation ---- */
-    @keyframes tos-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+    /* ======== CTA SECTION ======== */
+    .cta-section{padding:120px 24px;text-align:center;position:relative;overflow:hidden}
+    .cta-bg{position:absolute;inset:0;pointer-events:none;z-index:0}
+    .cta-orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+    .cta-orb-1{width:600px;height:400px;background:#8B5CF6;opacity:0.1;top:50%;left:50%;transform:translate(-50%,-50%)}
+    .cta-orb-2{width:400px;height:300px;background:#EC4899;opacity:0.07;top:40%;left:30%;transform:translate(-50%,-50%)}
+    .cta-content{position:relative;z-index:1;max-width:700px;margin:0 auto}
+    .cta-section h2{font-size:clamp(28px,5vw,56px);font-weight:900;color:#F0F0FF;margin-bottom:18px;letter-spacing:-0.02em}
+    .cta-section p{color:#A0A0C8;font-size:18px;margin-bottom:36px;line-height:1.7}
+    .cta-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;font-size:13px;font-weight:600;color:#10B981}
+    .cta-badge svg{width:16px;height:16px}
+
+    /* ======== AUTH MODAL ======== */
+    .auth-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all 0.3s;padding:16px}
+    .auth-modal-overlay.active{opacity:1;visibility:visible}
+    .auth-modal{background:rgba(10,10,30,0.97);border:1px solid rgba(139,92,246,0.25);border-radius:28px;max-width:440px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(139,92,246,0.1);animation:springIn 0.4s cubic-bezier(0.34,1.56,0.64,1);padding:36px;position:relative}
+    .auth-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(135deg,#8B5CF6,#EC4899,#06B6D4);border-radius:28px 28px 0 0}
+    .auth-modal-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#5E5E8A;transition:all 0.2s}
+    .auth-modal-close:hover{background:rgba(239,68,68,0.15);color:#EF4444}
+    .auth-modal-logo{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+    .auth-modal-logo img{width:34px;height:34px;border-radius:10px;box-shadow:0 0 12px rgba(139,92,246,0.4)}
+    .auth-modal-logo span{font-size:19px;font-weight:800;background:linear-gradient(135deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .auth-tabs{display:flex;gap:0;margin-bottom:26px;background:rgba(255,255,255,0.04);border-radius:12px;padding:4px}
+    .auth-tab{flex:1;padding:10px;text-align:center;font-weight:600;font-size:14px;color:#5E5E8A;cursor:pointer;border-radius:9px;transition:all 0.2s}
+    .auth-tab.active{background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(236,72,153,0.3));color:#F0F0FF;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+    .auth-form{display:none;animation:fadeSlideIn 0.3s ease-out}
+    .auth-form.active{display:block}
+    .auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#5E5E8A;font-size:12px;font-weight:600}
+    .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.07)}
+    .auth-links{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:13px}
+    .auth-links a{color:#8B5CF6;cursor:pointer;text-decoration:none;font-weight:500;transition:color 0.2s}
+    .auth-links a:hover{color:#EC4899}
+    .auth-success{display:none;text-align:center;animation:springIn 0.5s ease-out;padding:20px 0}
+    .auth-success.active{display:block}
+    .auth-success-icon{width:72px;height:72px;margin:0 auto 18px;background:rgba(16,185,129,0.12);border:2px solid rgba(16,185,129,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(16,185,129,0.3)}
+    .auth-success-icon svg{width:34px;height:34px;color:#10B981}
+
+    /* ======== FOOTER ======== */
+    .landing-footer{padding:28px 24px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;color:#5E5E8A;font-size:13px}
+    .landing-footer span{background:linear-gradient(135deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600}
+
+    /* ======== MOBILE MENU ======== */
+    .mobile-menu-btn{display:none;width:38px;height:38px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;align-items:center;justify-content:center;cursor:pointer;color:#A0A0C8;transition:all 0.2s}
+    .mobile-menu-btn:hover{background:rgba(139,92,246,0.1);color:#8B5CF6}
+    .mobile-nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(16px);z-index:490;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 24px 40px}
+    .mobile-nav-overlay.open{display:flex}
+    .mobile-nav-link{font-size:24px;font-weight:700;color:#A0A0C8;text-decoration:none;padding:12px 24px;border-radius:12px;transition:all 0.2s;width:100%;text-align:center;max-width:280px}
+    .mobile-nav-link:hover{color:#F0F0FF;background:rgba(139,92,246,0.12)}
+    .mobile-nav-close{position:absolute;top:20px;right:20px;width:38px;height:38px;background:rgba(255,255,255,0.06);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#A0A0C8}
+
+    /* ======== TOS ======== */
+    @keyframes tos-shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-6px)}30%{transform:translateX(6px)}45%{transform:translateX(-5px)}60%{transform:translateX(5px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
     .tos-error .checkbox-custom{border-color:var(--error)!important;animation:tos-shake 0.5s ease-out}
     .tos-error-msg{font-size:12px;color:var(--error);margin-top:6px;display:none;animation:fadeSlideIn 0.2s ease-out}
     .tos-error .tos-error-msg{display:block}
 
-    /* ---- Responsive ---- */
+    /* ======== RESPONSIVE ======== */
+    @media(max-width:1023px){
+      .bento-1{grid-column:span 12}
+      .bento-2{grid-column:span 12}
+      .bento-3,.bento-4,.bento-5{grid-column:span 4}
+      .ai-content{grid-template-columns:1fr;gap:40px}
+      .stats-strip-grid{grid-template-columns:repeat(2,1fr);gap:24px}
+      .strip-divider:nth-child(2){display:none}
+    }
     @media(max-width:767px){
+      .navbar{top:8px;padding:8px 14px;width:calc(100% - 16px)}
       .navbar-links{display:none}
-      .navbar{padding:12px 16px}
+      .mobile-menu-btn{display:flex}
       .hero{padding:100px 16px 60px}
       .hero-stats{gap:24px}
-      .hero-stat-value{font-size:22px}
-      .carousel-slide{flex-direction:column;padding:28px}
-      .carousel-slide-visual{width:100%;min-height:200px}
-      .carousel-arrows{display:none}
-      .feature-grid{grid-template-columns:1fr;padding:0 16px 60px}
-      .auth-modal{padding:24px;border-radius:20px}
+      .bento-3,.bento-4,.bento-5{grid-column:span 12}
+      .bento-1,.bento-2{grid-column:span 12}
+      .stats-strip-grid{grid-template-columns:repeat(2,1fr);gap:20px}
+      .auth-modal{padding:24px;border-radius:22px}
+      .section-wrapper{padding:60px 16px}
     }
     @media(max-width:480px){
       .hero-cta{flex-direction:column;align-items:stretch;gap:10px}
-      .hero-cta .btn-primary,.hero-cta .btn-secondary{width:100%}
-      .hero-stats{flex-direction:column;gap:16px}
+      .hero-cta .btn-primary,.hero-cta .btn-secondary-outline{width:100%;text-align:center;justify-content:center}
+      .hero-stats{gap:16px 32px}
+      .hero-divider{display:none}
+      .stats-strip-grid{grid-template-columns:1fr 1fr;gap:16px}
     }
   </style>
 </head>
 <body>
 
-  <!-- ============ NAVBAR ============ -->
+  <!-- ======== MOBILE NAV OVERLAY ======== -->
+  <div class="mobile-nav-overlay" id="mobileNav">
+    <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <a class="mobile-nav-link" href="#features" onclick="document.getElementById('mobileNav').classList.remove('open')">Features</a>
+    <a class="mobile-nav-link" href="#ai" onclick="document.getElementById('mobileNav').classList.remove('open')">AI Power</a>
+    <a class="mobile-nav-link" href="#faq" onclick="document.getElementById('mobileNav').classList.remove('open')">FAQ</a>
+    <a class="mobile-nav-link" href="#contact" onclick="document.getElementById('mobileNav').classList.remove('open')">Contact</a>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-top:16px">
+      <button class="btn btn-ghost btn-lg" id="mob-login-btn" style="width:100%;justify-content:center">Sign In</button>
+      <button class="btn btn-primary btn-lg" id="mob-signup-btn" style="width:100%;justify-content:center">Get Started Free</button>
+    </div>
+  </div>
+
+  <!-- ======== NAVBAR ======== -->
   <nav class="navbar" id="navbar">
     <a class="navbar-brand" href="#">
-      <img src="assets/logo.png" alt="TaskFlow" style="border-radius:8px">
-      <span class="gradient-text">TaskFlow</span>
+      <img src="assets/logo.png" alt="TaskFlow">
+      <span>TaskFlow</span>
     </a>
     <div class="navbar-links">
       <a class="navbar-link" href="#features">Features</a>
       <a class="navbar-link" href="#ai">AI Power</a>
       <a class="navbar-link" href="#faq">FAQ</a>
       <a class="navbar-link" href="#contact">Contact</a>
-      <a class="navbar-link" href="#get-started">Get Started</a>
     </div>
     <div class="navbar-cta">
       <button class="btn btn-ghost btn-sm" id="nav-login-btn">Sign In</button>
       <button class="btn btn-primary btn-sm" id="nav-signup-btn">Get Started Free</button>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </nav>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero-glow hero-glow-1"></div>
-    <div class="hero-glow hero-glow-2"></div>
-    <div class="hero-glow hero-glow-3"></div>
-    <div class="hero-badge">
-      <span class="pulse-dot"></span>
-      AI-Powered Productivity
+  <!-- ======== HERO ======== -->
+  <section class="hero" id="home">
+    <div class="hero-aurora">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+      <div class="hero-grid"></div>
     </div>
-    <h1>Organize Your Life<br>with <span class="gradient-word">TaskFlow AI</span></h1>
-    <p class="hero-sub">The smartest way to manage your tasks. AI-powered planning, offline-first architecture, beautiful analytics - all in one place.</p>
-    <div class="hero-cta">
-      <button class="btn btn-primary" id="hero-signup-btn">Start Free</button>
-      <button class="btn btn-secondary" id="hero-login-btn">I have an account</button>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-value">10+</div>
-        <div class="hero-stat-label">AI Features</div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Now with AI-powered task intelligence
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-value">10+</div>
-        <div class="hero-stat-label">Premium Themes</div>
+      <h1>Organize. Focus.<br><span class="word-gradient">Flow Forward.</span></h1>
+      <p class="hero-sub">TaskFlow combines AI intelligence, beautiful design, and offline-first architecture to help you achieve more — effortlessly.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" id="hero-signup-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Start Free Today
+        </button>
+        <button class="btn-secondary-outline" id="hero-login-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-2px;margin-right:6px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          Watch Demo
+        </button>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-value">100%</div>
-        <div class="hero-stat-label">Offline-First</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-value">∞</div>
-        <div class="hero-stat-label">Free Forever</div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">50K+</div>
+          <div class="hero-stat-label">Active Users</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">2M+</div>
+          <div class="hero-stat-label">Tasks Completed</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">4.9★</div>
+          <div class="hero-stat-label">User Rating</div>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">100%</div>
+          <div class="hero-stat-label">Offline Ready</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ FEATURE CAROUSEL ============ -->
-  <section class="features-section" id="features">
+  <!-- ======== STATS STRIP ======== -->
+  <div class="stats-strip">
+    <div class="stats-strip-grid">
+      <div class="strip-stat">
+        <div class="strip-value">50K+</div>
+        <div class="strip-label">Teams & Individuals</div>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-stat">
+        <div class="strip-value">99.9%</div>
+        <div class="strip-label">Uptime SLA</div>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-stat">
+        <div class="strip-value">12+</div>
+        <div class="strip-label">View Modes</div>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-stat">
+        <div class="strip-value">5 sec</div>
+        <div class="strip-label">Avg Setup Time</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== FEATURES BENTO ======== -->
+  <section class="section-wrapper" id="features">
     <div class="section-header">
-      <div class="section-badge">✨ Features</div>
-      <h2>Everything You Need to Stay Productive</h2>
-      <p>From AI-powered task planning to beautiful analytics - TaskFlow has it all.</p>
+      <div class="section-chip">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Core Features
+      </div>
+      <h2>Everything you need.<br>Nothing you don't.</h2>
+      <p>Designed from the ground up for people who take productivity seriously — without sacrificing beauty.</p>
     </div>
-    <div class="carousel-wrapper" id="carousel">
-      <div class="carousel-track" id="carousel-track">
-        <!-- Slide 1: Kanban Board -->
-        <div class="carousel-slide">
-          <div class="carousel-slide-content">
-            <div class="carousel-slide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg></div>
-            <h3>Kanban Board View</h3>
-            <p>Drag and drop tasks between columns. Visualize your workflow with Todo, In Progress, Review, and Done columns.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span class="chip">Drag &amp; Drop</span>
-              <span class="chip">Real-time Sync</span>
-              <span class="chip">Color Coding</span>
-            </div>
-          </div>
-          <div class="carousel-slide-visual">
-            <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:auto">
-              <rect width="420" height="260" rx="12" fill="#1a1a2e"/>
-              <!-- Column headers -->
-              <rect x="12" y="12" width="92" height="26" rx="6" fill="#7c3aed22"/>
-              <text x="58" y="30" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="700">TO DO</text>
-              <rect x="115" y="12" width="92" height="26" rx="6" fill="#f59e0b22"/>
-              <text x="161" y="30" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="700">IN PROGRESS</text>
-              <rect x="218" y="12" width="92" height="26" rx="6" fill="#6366f122"/>
-              <text x="264" y="30" text-anchor="middle" fill="#818cf8" font-size="10" font-weight="700">REVIEW</text>
-              <rect x="321" y="12" width="92" height="26" rx="6" fill="#22c55e22"/>
-              <text x="367" y="30" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="700">DONE</text>
-              <!-- To Do cards -->
-              <rect x="12" y="46" width="92" height="48" rx="8" fill="#16213e" stroke="#7c3aed44" stroke-width="1"/>
-              <text x="20" y="63" fill="#e8e8f0" font-size="9">Design landing page</text>
-              <rect x="20" y="70" width="28" height="14" rx="5" fill="#ef444420"/>
-              <text x="34" y="81" text-anchor="middle" fill="#ef4444" font-size="8">High</text>
-              <rect x="12" y="100" width="92" height="48" rx="8" fill="#16213e" stroke="#7c3aed44" stroke-width="1"/>
-              <text x="20" y="117" fill="#e8e8f0" font-size="9">Write user stories</text>
-              <rect x="20" y="124" width="32" height="14" rx="5" fill="#f97316" fill-opacity="0.2"/>
-              <text x="36" y="135" text-anchor="middle" fill="#f97316" font-size="8">Medium</text>
-              <!-- In Progress -->
-              <rect x="115" y="46" width="92" height="48" rx="8" fill="#16213e" stroke="#f59e0b44" stroke-width="1"/>
-              <text x="123" y="63" fill="#e8e8f0" font-size="9">Implement auth flow</text>
-              <rect x="123" y="70" width="42" height="14" rx="5" fill="#7c3aed20"/>
-              <text x="144" y="81" text-anchor="middle" fill="#a78bfa" font-size="8">AI ✨</text>
-              <!-- Review -->
-              <rect x="218" y="46" width="92" height="48" rx="8" fill="#16213e" stroke="#6366f144" stroke-width="1"/>
-              <text x="226" y="63" fill="#e8e8f0" font-size="9">Setup database</text>
-              <rect x="226" y="70" width="30" height="14" rx="5" fill="#6366f120"/>
-              <text x="241" y="81" text-anchor="middle" fill="#818cf8" font-size="8">Review</text>
-              <!-- Done -->
-              <rect x="321" y="46" width="92" height="48" rx="8" fill="#16213e" stroke="#22c55e44" stroke-width="1"/>
-              <text x="329" y="63" fill="#6ee7b7" font-size="9" text-decoration="line-through">Fix signup bug</text>
-              <rect x="329" y="70" width="28" height="14" rx="5" fill="#22c55e20"/>
-              <text x="343" y="81" text-anchor="middle" fill="#4ade80" font-size="8">Done</text>
-              <rect x="321" y="100" width="92" height="48" rx="8" fill="#16213e" stroke="#22c55e44" stroke-width="1"/>
-              <text x="329" y="117" fill="#6ee7b7" font-size="9" text-decoration="line-through">Write unit tests</text>
-              <rect x="329" y="124" width="28" height="14" rx="5" fill="#22c55e20"/>
-              <text x="343" y="135" text-anchor="middle" fill="#4ade80" font-size="8">Done</text>
-            </svg>
-          </div>
+    <div class="bento-grid">
+      <!-- Bento 1: Task Management -->
+      <div class="bento-card bento-1">
+        <div class="bento-icon bento-icon-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
-        <!-- Slide 2: AI Features -->
-        <div class="carousel-slide" id="ai">
-          <div class="carousel-slide-content">
-            <div class="carousel-slide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></div>
-            <h3>AI-Powered Intelligence</h3>
-            <p>Let AI generate tasks from your goals, suggest priorities, estimate deadlines, and create personalized daily briefings.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span class="chip">Groq LLaMA 3</span>
-              <span class="chip">Smart Planning</span>
-              <span class="chip">NLP Input</span>
-            </div>
+        <h3>Smart Task Management</h3>
+        <p>Create, organize, and prioritize tasks with AI assistance. Kanban boards, list views, calendar, matrix — all in one beautiful app.</p>
+        <span class="bento-tag" style="background:rgba(139,92,246,0.12);color:#8B5CF6">12 View Modes</span>
+        <div class="bento-mock">
+          <div class="mock-task-row">
+            <div class="mock-check-box done"></div>
+            <span style="flex:1;text-decoration:line-through;opacity:0.5">Finalize Q4 roadmap</span>
+            <span class="mock-pill mock-pill-done">Done</span>
           </div>
-          <div class="carousel-slide-visual">
-            <svg viewBox="0 0 380 240" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:auto">
-              <rect width="380" height="240" rx="12" fill="#0f0f17"/>
-              <!-- AI bubble -->
-              <rect x="14" y="14" width="260" height="64" rx="10" fill="#7c3aed15" stroke="#7c3aed40" stroke-width="1"/>
-              <circle cx="34" cy="36" r="10" fill="#7c3aed"/>
-              <text x="34" y="40" text-anchor="middle" fill="white" font-size="11">✦</text>
-              <text x="50" y="33" fill="#a78bfa" font-size="9" font-weight="700">AI Assistant</text>
-              <text x="50" y="48" fill="#c4b5fd" font-size="8">Based on your goal "Launch product",</text>
-              <text x="50" y="60" fill="#c4b5fd" font-size="8">I suggest these tasks for you:</text>
-              <!-- Tasks -->
-              <rect x="14" y="88" width="352" height="36" rx="8" fill="#16213e" stroke="#7c3aed30" stroke-width="1"/>
-              <circle cx="32" cy="106" r="9" fill="none" stroke="#7c3aed" stroke-width="2"/>
-              <text x="46" y="110" fill="#e8e8f0" font-size="9">Write product description</text>
-              <rect x="284" y="98" width="32" height="16" rx="6" fill="#7c3aed20"/>
-              <text x="300" y="110" text-anchor="middle" fill="#a78bfa" font-size="8">AI ✨</text>
-              <rect x="14" y="130" width="352" height="36" rx="8" fill="#16213e" stroke="#7c3aed30" stroke-width="1"/>
-              <circle cx="32" cy="148" r="9" fill="none" stroke="#7c3aed" stroke-width="2"/>
-              <text x="46" y="152" fill="#e8e8f0" font-size="9">Create marketing assets</text>
-              <rect x="278" y="140" width="38" height="16" rx="6" fill="#f97316" fill-opacity="0.2"/>
-              <text x="297" y="152" text-anchor="middle" fill="#f97316" font-size="8">Medium</text>
-              <rect x="14" y="172" width="352" height="36" rx="8" fill="#16213e" stroke="#7c3aed30" stroke-width="1"/>
-              <circle cx="32" cy="190" r="9" fill="none" stroke="#7c3aed" stroke-width="2"/>
-              <text x="46" y="194" fill="#e8e8f0" font-size="9">Setup analytics tracking</text>
-              <rect x="284" y="182" width="32" height="16" rx="6" fill="#ef444420"/>
-              <text x="300" y="194" text-anchor="middle" fill="#ef4444" font-size="8">High</text>
-            </svg>
+          <div class="mock-task-row">
+            <div class="mock-check-box"></div>
+            <span style="flex:1">Review design system PR</span>
+            <span class="mock-pill mock-pill-p">Critical</span>
           </div>
-        </div>
-        <!-- Slide 3: Analytics -->
-        <div class="carousel-slide">
-          <div class="carousel-slide-content">
-            <div class="carousel-slide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
-            <h3>Beautiful Analytics</h3>
-            <p>Track your productivity streaks, task completion rates, and time tracking with stunning interactive charts.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span class="chip">Streaks</span>
-              <span class="chip">Charts</span>
-              <span class="chip">Heatmaps</span>
-            </div>
-          </div>
-          <div class="carousel-slide-visual">
-            <svg viewBox="0 0 380 240" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:auto">
-              <rect width="380" height="240" rx="12" fill="#0f0f17"/>
-              <!-- Stat cards -->
-              <rect x="14" y="14" width="80" height="60" rx="10" fill="#16213e" stroke="#7c3aed30" stroke-width="1"/>
-              <text x="54" y="40" text-anchor="middle" fill="#7c3aed" font-size="20" font-weight="800">23</text>
-              <text x="54" y="58" text-anchor="middle" fill="#6b7280" font-size="8">Tasks Done</text>
-              <rect x="104" y="14" width="80" height="60" rx="10" fill="#16213e" stroke="#22c55e30" stroke-width="1"/>
-              <text x="144" y="40" text-anchor="middle" fill="#22c55e" font-size="20" font-weight="800">87%</text>
-              <text x="144" y="58" text-anchor="middle" fill="#6b7280" font-size="8">Rate</text>
-              <rect x="194" y="14" width="80" height="60" rx="10" fill="#16213e" stroke="#f59e0b30" stroke-width="1"/>
-              <text x="234" y="40" text-anchor="middle" fill="#f59e0b" font-size="20" font-weight="800">12🔥</text>
-              <text x="234" y="58" text-anchor="middle" fill="#6b7280" font-size="8">Day Streak</text>
-              <rect x="284" y="14" width="80" height="60" rx="10" fill="#16213e" stroke="#6366f130" stroke-width="1"/>
-              <text x="324" y="40" text-anchor="middle" fill="#818cf8" font-size="20" font-weight="800">4h</text>
-              <text x="324" y="58" text-anchor="middle" fill="#6b7280" font-size="8">Focus Time</text>
-              <!-- Chart -->
-              <rect x="14" y="84" width="352" height="140" rx="10" fill="#16213e" stroke="#ffffff12" stroke-width="1"/>
-              <text x="26" y="102" fill="#9ca3af" font-size="9" font-weight="600">Weekly Activity</text>
-              <polyline points="30,200 80,175 130,185 180,145 230,120 280,130 345,105" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <polyline points="30,200 80,175 130,185 180,145 230,120 280,130 345,105" fill="url(#chartGrad)" opacity="0.3"/>
-              <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/></linearGradient></defs>
-              <circle cx="80" cy="175" r="4" fill="#7c3aed"/>
-              <circle cx="180" cy="145" r="4" fill="#7c3aed"/>
-              <circle cx="280" cy="130" r="4" fill="#7c3aed"/>
-              <circle cx="345" cy="105" r="5" fill="#34d399" stroke="#0f0f17" stroke-width="2"/>
-              <text x="30" y="220" fill="#4b5563" font-size="8">Mon</text>
-              <text x="75" y="220" fill="#4b5563" font-size="8">Tue</text>
-              <text x="125" y="220" fill="#4b5563" font-size="8">Wed</text>
-              <text x="173" y="220" fill="#4b5563" font-size="8">Thu</text>
-              <text x="223" y="220" fill="#4b5563" font-size="8">Fri</text>
-              <text x="273" y="220" fill="#4b5563" font-size="8">Sat</text>
-              <text x="336" y="220" fill="#4b5563" font-size="8">Sun</text>
-            </svg>
-          </div>
-        </div>
-        <!-- Slide 4: Offline + Multi-theme -->
-        <div class="carousel-slide">
-          <div class="carousel-slide-content">
-            <div class="carousel-slide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></div>
-            <h3>Works Offline + 10 Beautiful Themes</h3>
-            <p>Full offline functionality with automatic sync. Switch between 10 stunning themes — dark, light, ocean, neon, aurora and more.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span class="chip">Service Worker</span>
-              <span class="chip">10 Themes</span>
-              <span class="chip">Background Sync</span>
-            </div>
-          </div>
-          <div class="carousel-slide-visual">
-            <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" style="width:90%;height:auto">
-              <rect width="360" height="220" rx="12" fill="#0f0f17"/>
-              <!-- Theme swatches -->
-              <text x="180" y="30" text-anchor="middle" fill="#9ca3af" font-size="10" font-weight="600">Choose Your Theme</text>
-              <!-- Dark -->
-              <rect x="20" y="44" width="70" height="48" rx="8" fill="#0f0f17" stroke="#7c3aed" stroke-width="2"/>
-              <circle cx="35" cy="60" r="6" fill="#7c3aed"/><circle cx="50" cy="60" r="6" fill="#34d399"/><circle cx="65" cy="60" r="6" fill="#6366f1"/><circle cx="80" cy="60" r="6" fill="#e8e8f0"/>
-              <text x="55" y="82" text-anchor="middle" fill="#a78bfa" font-size="8" font-weight="600">Dark</text>
-              <!-- Ocean -->
-              <rect x="100" y="44" width="70" height="48" rx="8" fill="#0a192f" stroke="#64ffda40" stroke-width="1"/>
-              <circle cx="115" cy="60" r="6" fill="#64ffda"/><circle cx="130" cy="60" r="6" fill="#57b5f9"/><circle cx="145" cy="60" r="6" fill="#48c9b0"/><circle cx="160" cy="60" r="6" fill="#ccd6f6"/>
-              <text x="135" y="82" text-anchor="middle" fill="#7dd3fc" font-size="8">Ocean</text>
-              <!-- Neon -->
-              <rect x="180" y="44" width="70" height="48" rx="8" fill="#050114" stroke="#d946ef40" stroke-width="1"/>
-              <circle cx="195" cy="60" r="6" fill="#d946ef"/><circle cx="210" cy="60" r="6" fill="#a855f7"/><circle cx="225" cy="60" r="6" fill="#ec4899"/><circle cx="240" cy="60" r="6" fill="#fae8ff"/>
-              <text x="215" y="82" text-anchor="middle" fill="#e879f9" font-size="8">Neon</text>
-              <!-- Aurora -->
-              <rect x="260" y="44" width="70" height="48" rx="8" fill="#061020" stroke="#2dd4bf40" stroke-width="1"/>
-              <circle cx="275" cy="60" r="6" fill="#2dd4bf"/><circle cx="290" cy="60" r="6" fill="#818cf8"/><circle cx="305" cy="60" r="6" fill="#34d399"/><circle cx="320" cy="60" r="6" fill="#e0f2fe"/>
-              <text x="295" y="82" text-anchor="middle" fill="#67e8f9" font-size="8">Aurora</text>
-              <!-- Offline indicator -->
-              <rect x="20" y="106" width="320" height="50" rx="10" fill="#16213e" stroke="#22c55e30" stroke-width="1"/>
-              <circle cx="46" cy="131" r="12" fill="#22c55e20"/>
-              <path d="M40,131 a8,8 0 1,1 12,0" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="46" cy="135" r="2" fill="#22c55e"/>
-              <text x="66" y="127" fill="#e8e8f0" font-size="10" font-weight="600">Works Offline</text>
-              <text x="66" y="143" fill="#6b7280" font-size="8">Tasks saved locally, syncs when online</text>
-              <rect x="20" y="166" width="320" height="42" rx="10" fill="#16213e" stroke="#7c3aed30" stroke-width="1"/>
-              <text x="180" y="182" text-anchor="middle" fill="#9ca3af" font-size="8">Sync Status</text>
-              <rect x="30" y="188" width="200" height="8" rx="4" fill="#1f2937"/>
-              <rect x="30" y="188" width="160" height="8" rx="4" fill="#7c3aed"/>
-              <text x="238" y="197" fill="#22c55e" font-size="9">✓ Synced</text>
-            </svg>
+          <div class="mock-task-row">
+            <div class="mock-check-box"></div>
+            <span style="flex:1;opacity:0.7">Set up CI/CD pipeline</span>
+            <span class="mock-pill mock-pill-ai">AI Suggested</span>
           </div>
         </div>
       </div>
-      <div class="carousel-arrows">
-        <button class="carousel-arrow" id="carousel-prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <button class="carousel-arrow" id="carousel-next"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      </div>
-    </div>
-    <div class="carousel-dots" id="carousel-dots">
-      <button class="carousel-dot active" data-slide="0"></button>
-      <button class="carousel-dot" data-slide="1"></button>
-      <button class="carousel-dot" data-slide="2"></button>
-      <button class="carousel-dot" data-slide="3"></button>
-    </div>
-  </section>
-
-  <!-- ============ FEATURE GRID ============ -->
-  <section class="feature-grid" id="feature-grid">
-    <div class="feature-grid-card">
-      <div class="feature-grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <h4>Pomodoro Timer</h4>
-      <p>Built-in focus timer with work/break cycles and session tracking</p>
-    </div>
-    <div class="feature-grid-card">
-      <div class="feature-grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="4"/><path d="M3 12h1m16 0h1M12 3v1m0 16v1M5.6 5.6l.7.7m11.4 11.4.7.7M5.6 18.4l.7-.7M18.4 5.6l-.7.7"/></svg></div>
-      <h4>10 Premium Themes</h4>
-      <p>Dark Obsidian, Ocean, Neon Night, Aurora Borealis, Sunset and 5 more stunning themes</p>
-    </div>
-    <div class="feature-grid-card">
-      <div class="feature-grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-      <h4>Smart Reminders</h4>
-      <p>Push notifications for deadlines, never miss a task again</p>
-    </div>
-    <div class="feature-grid-card">
-      <div class="feature-grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
-      <h4>Project Hierarchy</h4>
-      <p>Organize tasks into projects with colors, icons, and sub-projects</p>
-    </div>
-    <div class="feature-grid-card">
-      <div class="feature-grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
-      <h4>Task Links</h4>
-      <p>Link related tasks with blocking, parent-child relationships</p>
-    </div>
-    <div class="feature-grid-card">
-      <div class="feature-grid-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><rect x="2" y="3" width="20" height="4" rx="1"/><rect x="2" y="10" width="13" height="4" rx="1"/><rect x="2" y="17" width="9" height="4" rx="1"/></svg></div>
-      <h4>Keyboard Shortcuts</h4>
-      <p>Power-user shortcuts for blazing fast task management</p>
-    </div>
-  </section>
-
-  <!-- ============ FAQ ============ -->
-  <section id="faq">
-    <div class="faq-section">
-      <div class="section-header">
-        <div class="section-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</div>
-        <h2>Frequently Asked Questions</h2>
-        <p>Everything you need to know about TaskFlow.</p>
-      </div>
-      <div class="faq-item" id="faq-1">
-        <div class="faq-question" data-faq="faq-1">
-          Is TaskFlow really free?
-          <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <!-- Bento 2: AI -->
+      <div class="bento-card bento-2">
+        <div class="bento-icon bento-icon-2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 110 20 10 10 0 010-20z"/><path d="M12 6v6l4 2"/></svg>
         </div>
-        <div class="faq-answer"><div class="faq-answer-inner">Yes! TaskFlow is completely free to use. All core features including AI task management, offline support, 10+ themes, Kanban board, calendar, and analytics are available at no cost.</div></div>
+        <h3>AI Intelligence</h3>
+        <p>Let AI suggest tasks, estimate durations, detect blockers, and auto-prioritize your backlog — so you always know what to do next.</p>
+        <span class="bento-tag" style="background:rgba(236,72,153,0.12);color:#EC4899">Powered by Groq</span>
       </div>
-      <div class="faq-item" id="faq-2">
-        <div class="faq-question" data-faq="faq-2">
-          Do I need a Groq API key to use AI features?
-          <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <!-- Bento 3: Offline -->
+      <div class="bento-card bento-3">
+        <div class="bento-icon bento-icon-3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.18 19.79 19.79 0 01.16 6.16a2 2 0 01.68-2.08L2 3"/><path d="M1 1l22 22"/></svg>
         </div>
-        <div class="faq-answer"><div class="faq-answer-inner">A Groq API key is required to use AI-powered features like task generation, priority suggestions, and daily briefings. You can get a free API key at <a href="https://console.groq.com" target="_blank" style="color:var(--accent)">console.groq.com</a>. All other features work without it.</div></div>
+        <h3>100% Offline</h3>
+        <p>Works everywhere. Changes sync the moment you reconnect — zero data loss, always.</p>
+        <span class="bento-tag" style="background:rgba(6,182,212,0.12);color:#06B6D4">PWA Ready</span>
       </div>
-      <div class="faq-item" id="faq-3">
-        <div class="faq-question" data-faq="faq-3">
-          Does TaskFlow work offline?
-          <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <!-- Bento 4: Themes -->
+      <div class="bento-card bento-4">
+        <div class="bento-icon bento-icon-4">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
         </div>
-        <div class="faq-answer"><div class="faq-answer-inner">Absolutely. TaskFlow is built offline-first using a service worker and local IndexedDB storage. You can create, edit, and complete tasks without internet. Everything syncs automatically when you reconnect.</div></div>
+        <h3>5 Stunning Themes</h3>
+        <p>Cosmic dark, luminous light, ocean abyss, rose quartz, and neon cyber — switch in one click.</p>
+        <span class="bento-tag" style="background:rgba(245,158,11,0.12);color:#F59E0B">Day &amp; Night</span>
       </div>
-      <div class="faq-item" id="faq-4">
-        <div class="faq-question" data-faq="faq-4">
-          How is my data stored?
-          <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <!-- Bento 5: Analytics -->
+      <div class="bento-card bento-5">
+        <div class="bento-icon bento-icon-5">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         </div>
-        <div class="faq-answer"><div class="faq-answer-inner">Your tasks and profile are securely stored in Supabase (PostgreSQL), a trusted cloud database. Data is encrypted at rest and in transit. We never sell your data to third parties.</div></div>
-      </div>
-      <div class="faq-item" id="faq-5">
-        <div class="faq-question" data-faq="faq-5">
-          Can I export my tasks?
-          <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="faq-answer"><div class="faq-answer-inner">Yes! Go to Settings → Data → Export JSON to download all your tasks and projects as a JSON file at any time.</div></div>
-      </div>
-      <div class="faq-item" id="faq-6">
-        <div class="faq-question" data-faq="faq-6">
-          Can I sign in with Google?
-          <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="faq-answer"><div class="faq-answer-inner">Yes. TaskFlow supports Google OAuth for quick sign-in. You can also create a traditional account with email and password.</div></div>
+        <h3>Deep Analytics</h3>
+        <p>Productivity heatmaps, velocity charts, focus scores, and weekly insights — visualize your growth.</p>
+        <span class="bento-tag" style="background:rgba(16,185,129,0.12);color:#10B981">12 Chart Types</span>
       </div>
     </div>
   </section>
 
-  <!-- ============ CONTACT ============ -->
-  <section id="contact">
-    <div class="contact-section">
-      <div class="section-header">
-        <div class="section-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Contact</div>
-        <h2>Get in Touch</h2>
-        <p>Have questions or feedback? We'd love to hear from you.</p>
+  <!-- ======== AI SECTION ======== -->
+  <section class="ai-section" id="ai">
+    <div class="ai-content">
+      <div>
+        <div class="section-chip" style="margin-bottom:20px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 110 20 10 10 0 010-20z"/></svg>
+          AI Power
+        </div>
+        <h2 style="font-size:clamp(28px,4vw,44px);font-weight:800;color:#F0F0FF;letter-spacing:-0.02em;margin-bottom:18px">Your personal<br><span style="background:linear-gradient(135deg,#8B5CF6,#EC4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">productivity co-pilot</span></h2>
+        <p style="color:#A0A0C8;font-size:16px;line-height:1.8;margin-bottom:28px">Ask in plain English. Get smart task breakdowns, priority recommendations, blocker detection, and daily briefings — powered by the fastest AI inference.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;color:#8B5CF6;flex-shrink:0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div><div style="font-weight:600;color:#F0F0FF;margin-bottom:3px">Instant task breakdown</div><div style="font-size:13.5px;color:#A0A0C8">Describe any goal and AI splits it into actionable steps</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(236,72,153,0.12);display:flex;align-items:center;justify-content:center;color:#EC4899;flex-shrink:0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div><div style="font-weight:600;color:#F0F0FF;margin-bottom:3px">Smart prioritization</div><div style="font-size:13.5px;color:#A0A0C8">AI ranks tasks by impact, deadline, and your work patterns</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(6,182,212,0.12);display:flex;align-items:center;justify-content:center;color:#06B6D4;flex-shrink:0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div><div style="font-weight:600;color:#F0F0FF;margin-bottom:3px">Daily briefings</div><div style="font-size:13.5px;color:#A0A0C8">Wake up to a curated summary of what matters most today</div></div>
+          </div>
+        </div>
       </div>
-      <div class="contact-grid">
-        <div class="contact-card">
-          <div class="contact-card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <h4>Email Us</h4>
-          <p>For support, feedback, or partnership inquiries</p>
-          <a href="mailto:taskflow@gmail.com">taskflow@gmail.com</a>
+      <div class="ai-visual">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#5E5E8A;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:#10B981;box-shadow:0 0 8px #10B981;animation:pulseDot 1.5s ease-in-out infinite"></div>
+          TaskFlow AI · Live
         </div>
-        <div class="contact-card">
-          <div class="contact-card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <h4>Report a Bug</h4>
-          <p>Found something broken? Let us know and we'll fix it fast</p>
-          <a href="mailto:taskflow@gmail.com?subject=TaskFlow Bug Report">Report a bug</a>
+        <div class="ai-chat-item">
+          <div class="ai-avatar ai-avatar-user">U</div>
+          <div class="ai-bubble ai-bubble-user">Break down "launch product redesign" into tasks for this week</div>
         </div>
-        <div class="contact-card">
-          <div class="contact-card-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <div class="ai-chat-item">
+          <div class="ai-avatar ai-avatar-ai">✦</div>
+          <div class="ai-bubble ai-bubble-ai">Sure! Here's a focused sprint plan:<br><br>🎨 <strong>Day 1–2:</strong> Audit current design tokens &amp; component library<br>🖼️ <strong>Day 2–3:</strong> Create high-fidelity mockups for core views<br>⚡ <strong>Day 3–4:</strong> Implement design system changes<br>✅ <strong>Day 5:</strong> QA pass &amp; stakeholder review<br><br>Want me to add these to your TaskFlow board?</div>
+        </div>
+        <div class="ai-chat-item">
+          <div class="ai-avatar ai-avatar-ai">✦</div>
+          <div class="ai-typing">
+            <span></span><span></span><span></span>
           </div>
-          <h4>Feature Request</h4>
-          <p>Have an idea that would make TaskFlow even better?</p>
-          <a href="mailto:taskflow@gmail.com?subject=TaskFlow Feature Request">Share your idea</a>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px 16px;font-size:13px;color:#5E5E8A">Ask TaskFlow AI anything...</div>
+          <button class="btn btn-primary btn-sm" style="border-radius:12px;padding:0 16px;height:44px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ CTA ============ -->
+  <!-- ======== FAQ ======== -->
+  <section class="faq-section" id="faq">
+    <div class="section-header">
+      <div class="section-chip">FAQ</div>
+      <h2>Questions? Answered.</h2>
+      <p>Everything you need to know about TaskFlow.</p>
+    </div>
+
+    <div class="faq-item open" role="button" tabindex="0">
+      <div class="faq-question">
+        Is TaskFlow really free to use?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Yes! TaskFlow's core features — unlimited tasks, all view modes, AI assistance, offline sync, and 5 themes — are completely free. We'll introduce optional premium tiers for teams and power users in the future.</div>
+      </div>
+    </div>
+    <div class="faq-item" role="button" tabindex="0">
+      <div class="faq-question">
+        How does offline mode work?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">TaskFlow is built as a Progressive Web App with a service worker that caches all app assets and a local-first database. All changes are stored locally and synced to the cloud when connectivity returns. You'll never lose data.</div>
+      </div>
+    </div>
+    <div class="faq-item" role="button" tabindex="0">
+      <div class="faq-question">
+        What AI model powers TaskFlow?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">TaskFlow uses Groq's ultra-fast inference API with the latest open-source models. You can optionally bring your own API key for higher usage limits or use a different model provider.</div>
+      </div>
+    </div>
+    <div class="faq-item" role="button" tabindex="0">
+      <div class="faq-question">
+        Can I install TaskFlow as an app?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Absolutely! TaskFlow is a full Progressive Web App. On mobile, tap "Add to Home Screen" in your browser, and on desktop you'll see an install icon in your address bar. It works just like a native app.</div>
+      </div>
+    </div>
+    <div class="faq-item" role="button" tabindex="0">
+      <div class="faq-question">
+        Is my data secure and private?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Your tasks are stored in your own Supabase database, protected by row-level security policies. We never sell your data. All AI queries are sent directly from your browser to the AI provider — we don't store AI conversations.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CONTACT ======== -->
+  <section class="contact-section" id="contact">
+    <div class="section-header">
+      <div class="section-chip">Get in Touch</div>
+      <h2>We're here for you</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <h4>Discord Community</h4>
+        <p>Get help, share workflows, and connect with other productivity enthusiasts.</p>
+        <a href="#" onclick="return false">Join Discord →</a>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h4>Email Support</h4>
+        <p>Reach our team directly. We typically respond within a few hours.</p>
+        <a href="mailto:hello@taskflow.app">hello@taskflow.app →</a>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        </div>
+        <h4>GitHub</h4>
+        <p>TaskFlow is open source. Star the repo, report issues, or contribute.</p>
+        <a href="#" onclick="return false">View on GitHub →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CTA SECTION ======== -->
   <section class="cta-section" id="get-started">
-    <h2>Ready to Transform Your Productivity?</h2>
-    <p>Join TaskFlow today. It's free, forever.</p>
-    <div class="hero-cta">
-      <button class="btn btn-primary" id="cta-signup-btn">Create Free Account</button>
-      <button class="btn btn-secondary" id="cta-login-btn">Sign In</button>
+    <div class="cta-bg">
+      <div class="cta-orb cta-orb-1"></div>
+      <div class="cta-orb cta-orb-2"></div>
+    </div>
+    <div class="cta-content">
+      <div class="cta-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Free forever · No credit card required
+      </div>
+      <h2>Start organizing your life today.</h2>
+      <p>Join thousands of people who've transformed how they work with TaskFlow's beautiful, intelligent task management.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-xl" id="cta-signup-btn">Create Free Account</button>
+        <button class="btn btn-glass btn-lg" id="cta-login-btn">Sign In</button>
+      </div>
     </div>
   </section>
 
-  <!-- ============ FOOTER ============ -->
+  <!-- ======== FOOTER ======== -->
   <footer class="landing-footer">
-    <p style="margin-bottom:8px">
-      <a class="navbar-link" href="#features" style="font-size:13px">Features</a> &nbsp;·&nbsp;
-      <a class="navbar-link" href="#faq" style="font-size:13px">FAQ</a> &nbsp;·&nbsp;
-      <a class="navbar-link" href="#contact" style="font-size:13px">Contact</a>
-    </p>
-    <p>© 2026 TaskFlow.</p>
+    Built with passion by <span>TaskFlow</span> · Open source · Privacy first
   </footer>
 
-  <!-- ============ AUTH MODAL ============ -->
-  <div class="auth-modal-overlay" id="auth-modal-overlay">
-    <div class="auth-modal" style="position:relative">
-      <button class="auth-modal-close" id="auth-modal-close">
-        <svg width="18" height="18" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+  <!-- ======== AUTH MODAL ======== -->
+  <div class="auth-modal-overlay" id="authModal" role="dialog" aria-modal="true" aria-label="Sign in or sign up">
+    <div class="auth-modal">
+      <button class="auth-modal-close" id="authModalClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="auth-modal-logo">
-        <img src="assets/logo.svg" alt="TaskFlow">
-        <span class="gradient-text">TaskFlow</span>
+        <img src="assets/logo.png" alt="TaskFlow">
+        <span>TaskFlow</span>
       </div>
 
-      <!-- Tabs -->
-      <div class="auth-tabs" id="auth-tabs">
+      <div class="auth-tabs" id="authTabs">
         <div class="auth-tab active" data-tab="login">Sign In</div>
-        <div class="auth-tab" data-tab="signup">Sign Up</div>
+        <div class="auth-tab" data-tab="signup">Create Account</div>
       </div>
 
       <!-- Login Form -->
-      <form class="auth-form active" id="login-form">
-        <div class="input-group" style="margin-bottom:16px">
-          <label for="login-email">Email</label>
-          <div class="input-wrapper">
-            <input class="input" type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
-            <span class="input-success-icon" id="login-email-check">
-              <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </div>
-          <span class="input-error-msg" id="login-email-error">Please enter a valid email</span>
-        </div>
-        <div class="input-group" style="margin-bottom:8px">
-          <label for="login-password">Password</label>
-          <div class="input-wrapper">
-            <input class="input" type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
-            <span class="input-icon" id="toggle-login-pw" style="cursor:pointer">
-              <svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-            </span>
-          </div>
-        </div>
-        <div class="auth-links">
-          <label class="checkbox-wrapper" style="font-size:13px">
-            <input type="checkbox" id="remember-me">
-            <span class="checkbox-custom"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            Remember me
-          </label>
-          <a id="forgot-password-link">Forgot password?</a>
-        </div>
-        <button class="btn btn-primary w-full btn-lg" type="submit" id="login-btn">Sign In</button>
-        <div class="auth-divider">or continue with</div>
-        <button class="btn btn-google w-full" type="button" id="google-login-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.2 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      <div class="auth-form active" id="loginForm">
+        <button class="btn btn-google w-full" id="googleLoginBtn">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Continue with Google
         </button>
-      </form>
+        <div class="auth-divider">or sign in with email</div>
+        <form id="loginFormEl" novalidate>
+          <div class="input-group" style="margin-bottom:14px">
+            <label for="loginEmail">Email address</label>
+            <div class="input-wrapper">
+              <input type="email" id="loginEmail" class="input" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div class="input-error-msg" id="loginEmailErr">Please enter a valid email</div>
+          </div>
+          <div class="input-group" style="margin-bottom:6px">
+            <label for="loginPassword">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="loginPassword" class="input" placeholder="Enter your password" autocomplete="current-password" required>
+              <span class="input-icon" id="toggleLoginPwd" tabindex="0" role="button" aria-label="Toggle password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+            </div>
+            <div class="input-error-msg" id="loginPasswordErr">Password is required</div>
+          </div>
+          <div class="auth-links">
+            <label class="checkbox-wrapper" style="font-size:13px">
+              <input type="checkbox" id="rememberMe">
+              <span class="checkbox-custom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>Remember me</span>
+            </label>
+            <a href="#" id="forgotPwdLink">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Sign In</button>
+        </form>
+      </div>
 
       <!-- Signup Form -->
-      <form class="auth-form" id="signup-form">
-        <div class="input-group" style="margin-bottom:16px">
-          <label for="signup-name">Full Name</label>
-          <input class="input" type="text" id="signup-name" placeholder="Alex Johnson" required autocomplete="name">
-        </div>
-        <div class="input-group" style="margin-bottom:16px">
-          <label for="signup-email">Email</label>
-          <div class="input-wrapper">
-            <input class="input" type="email" id="signup-email" placeholder="you@example.com" required autocomplete="email">
-            <span class="input-success-icon" id="signup-email-check">
-              <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </div>
-        </div>
-        <div class="input-group" style="margin-bottom:8px">
-          <label for="signup-password">Password</label>
-          <div class="input-wrapper">
-            <input class="input" type="password" id="signup-password" placeholder="••••••••" required autocomplete="new-password">
-            <span class="input-icon" id="toggle-signup-pw" style="cursor:pointer">
-              <svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-            </span>
-          </div>
-          <div class="password-strength" id="password-strength">
-            <div class="strength-segment" data-level="1"></div>
-            <div class="strength-segment" data-level="2"></div>
-            <div class="strength-segment" data-level="3"></div>
-            <div class="strength-segment" data-level="4"></div>
-          </div>
-        </div>
-        <div class="input-group" style="margin-bottom:16px">
-          <label for="signup-confirm">Confirm Password</label>
-          <div class="input-wrapper">
-            <input class="input" type="password" id="signup-confirm" placeholder="••••••••" required autocomplete="new-password">
-            <span class="input-success-icon" id="confirm-match">
-              <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </div>
-        </div>
-        <div id="tos-wrapper" style="margin-bottom:20px">
-          <label class="checkbox-wrapper" style="font-size:13px">
-            <input type="checkbox" id="terms-check">
-            <span class="checkbox-custom"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            I agree to the <a href="#" id="tos-link" style="color:var(--accent)" onclick="return false">Terms of Service</a>
-          </label>
-          <div class="tos-error-msg" id="tos-error-msg">⚠️ Please accept the Terms of Service to create an account.</div>
-        </div>
-        <button class="btn btn-primary w-full btn-lg" type="submit" id="signup-btn">Create Account</button>
-        <div class="auth-divider">or continue with</div>
-        <button class="btn btn-google w-full" type="button" id="google-signup-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.2 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      <div class="auth-form" id="signupForm">
+        <button class="btn btn-google w-full" id="googleSignupBtn">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Continue with Google
         </button>
-      </form>
+        <div class="auth-divider">or create with email</div>
+        <form id="signupFormEl" novalidate>
+          <div class="input-group" style="margin-bottom:14px">
+            <label for="signupName">Full name</label>
+            <input type="text" id="signupName" class="input" placeholder="Your name" autocomplete="name" required>
+            <div class="input-error-msg" id="signupNameErr">Please enter your name</div>
+          </div>
+          <div class="input-group" style="margin-bottom:14px">
+            <label for="signupEmail">Email address</label>
+            <input type="email" id="signupEmail" class="input" placeholder="you@example.com" autocomplete="email" required>
+            <div class="input-error-msg" id="signupEmailErr">Please enter a valid email</div>
+          </div>
+          <div class="input-group" style="margin-bottom:14px">
+            <label for="signupPassword">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="signupPassword" class="input" placeholder="Min. 8 characters" autocomplete="new-password" required minlength="8">
+              <span class="input-icon" id="toggleSignupPwd" tabindex="0" role="button" aria-label="Toggle password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+            </div>
+            <div class="password-strength" id="pwdStrength">
+              <div class="strength-segment" data-level="1"></div>
+              <div class="strength-segment" data-level="2"></div>
+              <div class="strength-segment" data-level="3"></div>
+              <div class="strength-segment" data-level="4"></div>
+            </div>
+            <div class="input-error-msg" id="signupPasswordErr">Password must be at least 8 characters</div>
+          </div>
+          <div class="input-group" style="margin-bottom:18px" id="tosGroup">
+            <label class="checkbox-wrapper" style="align-items:flex-start;gap:10px">
+              <input type="checkbox" id="tosCheck">
+              <span class="checkbox-custom" style="margin-top:2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span style="font-size:13px;color:#A0A0C8;line-height:1.5">I agree to the <a href="#" style="color:#8B5CF6;font-weight:600" onclick="return false">Terms of Service</a> and <a href="#" style="color:#8B5CF6;font-weight:600" onclick="return false">Privacy Policy</a></span>
+            </label>
+            <div class="tos-error-msg">Please accept the terms to continue</div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="signupBtn">Create Free Account</button>
+        </form>
+      </div>
 
-      <!-- Signup Success State -->
-      <div class="auth-success" id="signup-success">
+      <!-- Success State -->
+      <div class="auth-success" id="authSuccess">
         <div class="auth-success-icon">
-          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <h2 style="margin-bottom:8px">Check your inbox! 📬</h2>
-        <p style="color:var(--text-secondary);margin-bottom:16px">We sent a confirmation link to</p>
-        <p style="font-weight:600;color:var(--accent);margin-bottom:24px" id="signup-success-email"></p>
-        <button class="btn btn-ghost btn-sm" id="resend-confirm">Resend confirmation email</button>
+        <h3 style="font-size:20px;font-weight:800;color:#F0F0FF;margin-bottom:8px">Welcome to TaskFlow!</h3>
+        <p style="color:#A0A0C8;font-size:14px;margin-bottom:0">Redirecting you to your workspace...</p>
+        <div style="margin-top:20px;display:flex;justify-content:center"><div class="spinner"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- ============ TERMS OF SERVICE MODAL ============ -->
-  <div class="modal-overlay" id="tos-modal" style="z-index:9999">
-    <div class="modal" style="max-width:560px;max-height:80vh;display:flex;flex-direction:column">
-      <div class="modal-header" style="position:sticky;top:0;background:var(--bg-card);z-index:1;flex-shrink:0">
-        <h3>Terms of Service</h3>
-        <button class="btn btn-ghost btn-icon" id="close-tos-modal">
-          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <div class="modal-body" style="overflow-y:auto;flex:1;line-height:1.7;color:var(--text-secondary);font-size:14px">
-        <h4 style="color:var(--text-primary);margin-bottom:8px">1. Acceptance of Terms</h4>
-        <p style="margin-bottom:16px">By accessing and using TaskFlow, you accept and agree to be bound by the terms and provisions of this agreement.</p>
-        <h4 style="color:var(--text-primary);margin-bottom:8px">2. Use License</h4>
-        <p style="margin-bottom:16px">TaskFlow is free to use for personal and commercial productivity. You may not redistribute, sell, or sublicense the application without written permission.</p>
-        <h4 style="color:var(--text-primary);margin-bottom:8px">3. Privacy &amp; Data</h4>
-        <p style="margin-bottom:16px">Your tasks and personal data are stored securely using Supabase. We do not sell your data to third parties. Your Groq API key is encrypted at rest.</p>
-        <h4 style="color:var(--text-primary);margin-bottom:8px">4. AI Features</h4>
-        <p style="margin-bottom:16px">AI features are powered by Groq. By using AI features, you agree to Groq's terms of service. Do not input sensitive personal or financial data into AI prompts.</p>
-        <h4 style="color:var(--text-primary);margin-bottom:8px">5. Disclaimer</h4>
-        <p style="margin-bottom:16px">TaskFlow is provided "as is" without warranty of any kind. We are not liable for any data loss or damages arising from use of the application.</p>
-        <h4 style="color:var(--text-primary);margin-bottom:8px">6. Changes to Terms</h4>
-        <p>We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of new terms.</p>
-      </div>
-      <div class="modal-footer" style="flex-shrink:0">
-        <button class="btn btn-primary" id="tos-accept-btn">I Understand &amp; Accept</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ FORGOT PASSWORD MODAL ============ -->
-  <div class="modal-overlay" id="forgot-modal">
-    <div class="modal" style="max-width:440px">
-      <div class="modal-header">
-        <h3>Reset Password</h3>
-        <button class="btn btn-ghost btn-icon" id="close-forgot-modal">
-          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p style="color:var(--text-secondary);margin-bottom:20px">Enter your email and we'll send you a link to reset your password.</p>
-        <div class="input-group" style="margin-bottom:20px">
-          <label for="forgot-email">Email</label>
-          <input class="input" type="email" id="forgot-email" placeholder="you@example.com" required>
-        </div>
-        <button class="btn btn-primary w-full" id="forgot-submit-btn">Send Reset Link</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- UI Script — independent, never crashes -->
+  <!-- ======== SCRIPTS ======== -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
 
-      // ---- Navbar scroll effect ----
-      window.addEventListener('scroll', function() {
-        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    // Mobile menu
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('mobileNav').classList.add('open');
+    });
+    document.getElementById('mobileNavClose').addEventListener('click', () => {
+      document.getElementById('mobileNav').classList.remove('open');
+    });
+
+    // Auth modal
+    const authModal = document.getElementById('authModal');
+    const openAuthModal = (tab = 'login') => {
+      authModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      switchTab(tab);
+    };
+    const closeAuthModal = () => {
+      authModal.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+    document.getElementById('authModalClose').addEventListener('click', closeAuthModal);
+    authModal.addEventListener('click', e => { if(e.target === authModal) closeAuthModal(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeAuthModal(); });
+
+    ['nav-login-btn','cta-login-btn'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => openAuthModal('login'));
+    });
+    ['nav-signup-btn','hero-signup-btn','cta-signup-btn'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => openAuthModal('signup'));
+    });
+    ['hero-login-btn'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => openAuthModal('login'));
+    });
+    ['mob-login-btn'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => { document.getElementById('mobileNav').classList.remove('open'); openAuthModal('login'); });
+    });
+    ['mob-signup-btn'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => { document.getElementById('mobileNav').classList.remove('open'); openAuthModal('signup'); });
+    });
+
+    // Auth tabs
+    const switchTab = (tab) => {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      document.getElementById('loginForm').classList.toggle('active', tab === 'login');
+      document.getElementById('signupForm').classList.toggle('active', tab === 'signup');
+      document.getElementById('authSuccess').classList.remove('active');
+    };
+    document.getElementById('authTabs').addEventListener('click', e => {
+      if(e.target.dataset.tab) switchTab(e.target.dataset.tab);
+    });
+
+    // Password toggles
+    ['toggleLoginPwd','toggleSignupPwd'].forEach(id => {
+      const btn = document.getElementById(id);
+      if(!btn) return;
+      btn.addEventListener('click', () => {
+        const inp = btn.previousElementSibling;
+        inp.type = inp.type === 'password' ? 'text' : 'password';
       });
+      btn.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') btn.click(); });
+    });
 
-      // ---- Smooth scroll for anchor links ----
-      document.querySelectorAll('a[href^="#"]').forEach(function(a) {
-        a.addEventListener('click', function(e) {
-          var target = document.querySelector(a.getAttribute('href'));
-          if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    // Password strength
+    const pwdInput = document.getElementById('signupPassword');
+    if(pwdInput) {
+      pwdInput.addEventListener('input', () => {
+        const val = pwdInput.value;
+        let score = 0;
+        if(val.length >= 8) score++;
+        if(/[A-Z]/.test(val)) score++;
+        if(/[0-9]/.test(val)) score++;
+        if(/[^A-Za-z0-9]/.test(val)) score++;
+        document.querySelectorAll('#pwdStrength .strength-segment').forEach((seg, i) => {
+          seg.classList.toggle('active', i < score);
         });
       });
+    }
 
-      // ---- Carousel ----
-      var currentSlide = 0;
-      var totalSlides = 4;
-      var track = document.getElementById('carousel-track');
-      var autoplayInterval;
-
-      function goToSlide(n) {
-        currentSlide = ((n % totalSlides) + totalSlides) % totalSlides;
-        if (track) track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
-        document.querySelectorAll('.carousel-dot').forEach(function(d, i) { d.classList.toggle('active', i === currentSlide); });
-      }
-      function startAutoplay() { autoplayInterval = setInterval(function() { goToSlide(currentSlide + 1); }, 5000); }
-      function stopAutoplay() { clearInterval(autoplayInterval); }
-
-      document.getElementById('carousel-prev')?.addEventListener('click', function() { stopAutoplay(); goToSlide(currentSlide - 1); startAutoplay(); });
-      document.getElementById('carousel-next')?.addEventListener('click', function() { stopAutoplay(); goToSlide(currentSlide + 1); startAutoplay(); });
-      document.getElementById('carousel-dots')?.addEventListener('click', function(e) {
-        var dot = e.target.closest('.carousel-dot');
-        if (dot) { stopAutoplay(); goToSlide(parseInt(dot.dataset.slide)); startAutoplay(); }
-      });
-      startAutoplay();
-
-      // ---- Auth Modal ----
-      var authOverlay = document.getElementById('auth-modal-overlay');
-      function openAuth(tab) {
-        authOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        var tabs = document.querySelectorAll('.auth-tab');
-        var forms = document.querySelectorAll('.auth-form');
-        var success = document.getElementById('signup-success');
-        tabs.forEach(function(t) { t.classList.remove('active'); });
-        forms.forEach(function(f) { f.classList.remove('active'); });
-        if (success) success.classList.remove('active');
-        tabs.forEach(function(t) { if (t.getAttribute('data-tab') === tab) t.classList.add('active'); });
-        var form = document.getElementById(tab + '-form');
-        if (form) form.classList.add('active');
-      }
-      function closeAuth() {
-        authOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-
-      // Open auth buttons
-      ['nav-login-btn','hero-login-btn','cta-login-btn'].forEach(function(id) {
-        document.getElementById(id)?.addEventListener('click', function() { openAuth('login'); });
-      });
-      ['nav-signup-btn','hero-signup-btn','cta-signup-btn'].forEach(function(id) {
-        document.getElementById(id)?.addEventListener('click', function() { openAuth('signup'); });
-      });
-
-      // Close auth
-      document.getElementById('auth-modal-close')?.addEventListener('click', closeAuth);
-      authOverlay?.addEventListener('click', function(e) { if (e.target === authOverlay) closeAuth(); });
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAuth(); });
-
-      // Tab switching
-      document.querySelectorAll('.auth-tab').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-          document.querySelectorAll('.auth-tab').forEach(function(t) { t.classList.remove('active'); });
-          document.querySelectorAll('.auth-form').forEach(function(f) { f.classList.remove('active'); });
-          document.getElementById('signup-success')?.classList.remove('active');
-          tab.classList.add('active');
-          var form = document.getElementById(tab.getAttribute('data-tab') + '-form');
-          if (form) form.classList.add('active');
-        });
-      });
-
-      // Password toggles
-      function setupPwToggle(tid, iid) {
-        var t = document.getElementById(tid);
-        if (t) t.addEventListener('click', function() { var i = document.getElementById(iid); if (i) i.type = i.type === 'password' ? 'text' : 'password'; });
-      }
-      setupPwToggle('toggle-login-pw', 'login-password');
-      setupPwToggle('toggle-signup-pw', 'signup-password');
-
-      // Email validation
-      function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-      window._validateEmail = validateEmail;
-
-      ['login-email','signup-email'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('input', function(e) {
-          var check = document.getElementById(id === 'login-email' ? 'login-email-check' : 'signup-email-check');
-          var err = document.getElementById(id + '-error');
-          if (validateEmail(e.target.value)) { if (check) check.classList.add('visible'); e.target.classList.remove('input--error'); e.target.classList.add('input--success'); if (err) err.classList.remove('visible'); }
-          else { if (check) check.classList.remove('visible'); e.target.classList.remove('input--success'); }
-        });
-      });
-
-      // Password strength
-      var spw = document.getElementById('signup-password');
-      if (spw) spw.addEventListener('input', function(e) {
-        var pw = e.target.value; var s = 0;
-        if (pw.length >= 8) s++; if (/[A-Z]/.test(pw)) s++; if (/[0-9]/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++;
-        document.querySelectorAll('.strength-segment').forEach(function(seg, i) { seg.classList.toggle('active', i < s); });
-      });
-
-      // Confirm match
-      var cpw = document.getElementById('signup-confirm');
-      if (cpw) cpw.addEventListener('input', function(e) {
-        var pw = document.getElementById('signup-password').value;
-        var m = document.getElementById('confirm-match');
-        if (e.target.value === pw && pw.length > 0) { if (m) m.classList.add('visible'); e.target.classList.add('input--success'); }
-        else { if (m) m.classList.remove('visible'); e.target.classList.remove('input--success'); }
-      });
-
-      // Forgot password modal
-      document.getElementById('forgot-password-link')?.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('forgot-modal').classList.add('active'); });
-      document.getElementById('close-forgot-modal')?.addEventListener('click', function() { document.getElementById('forgot-modal').classList.remove('active'); });
-      document.getElementById('forgot-modal')?.addEventListener('click', function(e) { if (e.target.id === 'forgot-modal') e.target.classList.remove('active'); });
-
-      console.log('✅ TaskFlow Landing UI initialized');
-
-      // ---- FAQ Accordion ----
-      document.querySelectorAll('.faq-question').forEach(function(q) {
-        q.addEventListener('click', function() {
-          var id = q.getAttribute('data-faq');
-          var item = document.getElementById(id);
-          if (!item) return;
-          var isOpen = item.classList.contains('open');
-          // Close all first
-          document.querySelectorAll('.faq-item').forEach(function(fi) { fi.classList.remove('open'); });
-          // Toggle clicked one
-          if (!isOpen) item.classList.add('open');
-        });
-      });
-
-      // ---- Terms of Service Modal ----
-      var tosModal = document.getElementById('tos-modal');
-      document.getElementById('tos-link')?.addEventListener('click', function(e) { e.preventDefault(); if (tosModal) tosModal.classList.add('active'); });
-      document.getElementById('close-tos-modal')?.addEventListener('click', function() { if (tosModal) tosModal.classList.remove('active'); });
-      document.getElementById('tos-accept-btn')?.addEventListener('click', function() { if (tosModal) tosModal.classList.remove('active'); var tc = document.getElementById('terms-check'); if(tc) tc.checked = true; });
-      tosModal?.addEventListener('click', function(e) { if (e.target === tosModal) tosModal.classList.remove('active'); });
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const q = item.querySelector('.faq-question');
+      q.addEventListener('click', () => item.classList.toggle('open'));
+      item.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.classList.toggle('open'); } });
     });
   </script>
-
-  <!-- Supabase Auth Script — plain script, no module import needed -->
-  <script>
-    (function() {
-      // Wait for DOM + CDN to be ready
-      function initAuth() {
-        var SUPABASE_URL = 'https://utphxjkbafdztqkshnqw.supabase.co';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0cGh4amtiYWZkenRxa3NobnF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MjEwNzQsImV4cCI6MjA4OTk5NzA3NH0.JVjRsdHeUVEeH8UsL0UR8j_Y3wYZVzp2LXn2Gw2ChSc';
-
-        // Check if CDN loaded
-        if (!window.supabase || !window.supabase.createClient) {
-          console.error('❌ Supabase CDN not loaded. Auth will not work.');
-          return;
-        }
-
-        var sb;
-        try {
-          sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
-          });
-        } catch(e) {
-          console.error('❌ Supabase createClient failed:', e);
-          return;
-        }
-
-        console.log('✅ Supabase client created');
-
-        // Store globally for other scripts
-        window._supabase = sb;
-
-        // Listen for auth state changes (handles OAuth redirect)
-        sb.auth.onAuthStateChange(function(event, session) {
-          console.log('Auth event:', event);
-          if (event === 'SIGNED_IN' && session) {
-            window.location.href = 'app.html';
-          }
-        });
-
-        // Check existing session (handles page reload when already logged in)
-        sb.auth.getSession().then(function(result) {
-          if (result.data && result.data.session) {
-            window.location.href = 'app.html';
-          }
-        }).catch(function(e) { console.warn('Session check failed:', e); });
-
-        // Helper: show inline themed error message inside auth modal
-        function showError(msg) {
-          var existing = document.getElementById('auth-error-banner');
-          if (existing) existing.remove();
-          var banner = document.createElement('div');
-          banner.id = 'auth-error-banner';
-          banner.style.cssText = 'background:var(--error-bg);border:1px solid var(--error);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--error);display:flex;align-items:center;gap:8px;animation:fadeSlideIn 0.3s ease-out';
-          banner.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ' + msg;
-          // Insert before active form’s submit button
-          var activeForm = document.querySelector('.auth-form.active');
-          if (activeForm) activeForm.insertBefore(banner, activeForm.firstChild);
-          else document.querySelector('.auth-modal').insertBefore(banner, document.querySelector('.auth-tabs').nextSibling);
-          setTimeout(function() { if (banner.parentNode) banner.remove(); }, 6000);
-        }
-
-        // Login
-        var loginForm = document.getElementById('login-form');
-        if (loginForm) {
-          loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var btn = document.getElementById('login-btn');
-            var email = document.getElementById('login-email').value;
-            var password = document.getElementById('login-password').value;
-            if (!window._validateEmail(email)) {
-              document.getElementById('login-email').classList.add('input--error');
-              var err = document.getElementById('login-email-error');
-              if (err) err.classList.add('visible');
-              return;
-            }
-            btn.classList.add('btn-loading');
-            btn.disabled = true;
-            sb.auth.signInWithPassword({ email: email, password: password }).then(function(r) {
-              if (r.error) throw r.error;
-              window.location.href = 'app.html';
-            }).catch(function(err) {
-              btn.classList.remove('btn-loading');
-              btn.disabled = false;
-              showError(err.message || 'Login failed');
-            });
-          });
-        }
-
-        // Signup
-        var signupForm = document.getElementById('signup-form');
-        if (signupForm) {
-          signupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var btn = document.getElementById('signup-btn');
-            var name = document.getElementById('signup-name').value;
-            var email = document.getElementById('signup-email').value;
-            var password = document.getElementById('signup-password').value;
-            var confirmVal = document.getElementById('signup-confirm').value;
-            if (password !== confirmVal) { showError('Passwords do not match'); return; }
-            var termsEl = document.getElementById('terms-check');
-            if (termsEl && !termsEl.checked) {
-              var tosWrapper = document.getElementById('tos-wrapper');
-              if (tosWrapper) {
-                tosWrapper.classList.add('tos-error');
-                tosWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                setTimeout(function() { tosWrapper.classList.remove('tos-error'); }, 3000);
-              }
-              return;
-            }
-            btn.classList.add('btn-loading');
-            btn.disabled = true;
-            sb.auth.signUp({
-              email: email,
-              password: password,
-              options: { data: { full_name: name } }
-            }).then(function(r) {
-              if (r.error) throw r.error;
-              document.getElementById('signup-form').classList.remove('active');
-              document.getElementById('signup-success').classList.add('active');
-              document.getElementById('signup-success-email').textContent = email;
-            }).catch(function(err) {
-              btn.classList.remove('btn-loading');
-              btn.disabled = false;
-              // Handle email sending failure gracefully
-              var msg = err.message || 'Signup failed. Please try again.';
-              if (msg.toLowerCase().includes('sending confirmation email') || msg.toLowerCase().includes('email')) {
-                // Account may have been created but email failed — show success with a warning
-                document.getElementById('signup-form').classList.remove('active');
-                document.getElementById('signup-success').classList.add('active');
-                document.getElementById('signup-success-email').textContent = email;
-                // Optionally show a soft warning (non-blocking)
-                setTimeout(function() {
-                  showError('Note: Confirmation email may be delayed. You can still try logging in if your account was created.');
-                  document.getElementById('auth-error-banner').style.cssText += ';background:var(--warning-bg);border-color:var(--warning);color:var(--warning)';
-                  document.querySelector('.auth-form.active')?.insertBefore(document.getElementById('auth-error-banner'), document.querySelector('.auth-form.active').firstChild);
-                }, 100);
-              } else {
-                showError(msg);
-              }
-            });
-          });
-        }
-
-        // Google OAuth
-        var googleLogin = document.getElementById('google-login-btn');
-        if (googleLogin) {
-          googleLogin.addEventListener('click', function() {
-            sb.auth.signInWithOAuth({
-              provider: 'google',
-              options: { redirectTo: window.location.origin + '/' }
-            }).catch(function(err) { showError(err.message || 'Google login failed'); });
-          });
-        }
-        var googleSignup = document.getElementById('google-signup-btn');
-        if (googleSignup) {
-          googleSignup.addEventListener('click', function() {
-            sb.auth.signInWithOAuth({
-              provider: 'google',
-              options: { redirectTo: window.location.origin + '/app.html' }
-            }).catch(function(err) { showError(err.message || 'Google login failed'); });
-          });
-        }
-
-        // Forgot Password Submit
-        var forgotBtn = document.getElementById('forgot-submit-btn');
-        if (forgotBtn) {
-          forgotBtn.addEventListener('click', function() {
-            var email = document.getElementById('forgot-email').value;
-            if (!window._validateEmail(email)) return;
-            forgotBtn.classList.add('btn-loading');
-            sb.auth.resetPasswordForEmail(email, {
-              redirectTo: window.location.origin + '/app.html#reset-password'
-            }).then(function(r) {
-              if (r.error) throw r.error;
-              forgotBtn.classList.remove('btn-loading');
-              forgotBtn.textContent = '✓ Email Sent!';
-              forgotBtn.disabled = true;
-            }).catch(function(err) {
-              forgotBtn.classList.remove('btn-loading');
-              showError(err.message || 'Failed to send reset email');
-            });
-          });
-        }
-
-        // Resend Confirmation
-        var resendBtn = document.getElementById('resend-confirm');
-        if (resendBtn) {
-          resendBtn.addEventListener('click', function() {
-            var email = document.getElementById('signup-success-email').textContent;
-            sb.auth.resend({ type: 'signup', email: email }).then(function() {
-              resendBtn.textContent = '✓ Sent!';
-            });
-          });
-        }
-
-        console.log('✅ Supabase auth handlers initialized');
-      }
-
-      // Run when DOM is ready (CDN script should already be loaded since it's above)
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAuth);
-      } else {
-        initAuth();
-      }
-    })();
-  </script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
-
-

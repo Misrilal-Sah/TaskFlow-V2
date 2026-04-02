@@ -1,5 +1,5 @@
 /* ============================================
-   TaskFlow Responsive Breakpoints
+   TaskFlow Responsive Breakpoints — Premium
    300px micro-mobile through 4K widescreen
    ============================================ */
 
@@ -11,7 +11,7 @@
   .main-content { margin-left: 0; }
   .app-header { padding: 0 var(--space-sm); }
   .search-bar { width: 100%; }
-  .view-container { padding: var(--space-sm); }
+  .view-container { padding: var(--space-sm) var(--space-sm) 100px; }
   .view-header { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
   .view-actions { width: 100%; flex-wrap: wrap; }
   .board-view { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; padding-bottom: var(--space-md); }
@@ -20,10 +20,10 @@
   .calendar-day { min-height: 60px; }
   .stats-grid { grid-template-columns: 1fr; }
   .grid-view { grid-template-columns: 1fr; }
-  .modal { margin: var(--space-sm); border-radius: var(--radius-lg); }
-  .toast-container { left: var(--space-sm); right: var(--space-sm); }
+  .modal { margin: var(--space-sm); border-radius: var(--radius-xl); }
+  .toast-container { left: var(--space-sm); right: var(--space-sm); bottom: 80px; }
   .toast { min-width: auto; width: 100%; }
-  .fab { bottom: 80px; right: var(--space-md); width: 48px; height: 48px; }
+  .fab { bottom: 80px; right: var(--space-md); width: 50px; height: 50px; }
   .ai-panel { width: 100%; }
   .theme-picker { grid-template-columns: repeat(2, 1fr); }
   .onboarding-card { padding: var(--space-lg); }
@@ -39,7 +39,7 @@
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); width: 280px; z-index: 1001; }
   .main-content { margin-left: 0; }
-  .view-container { padding: var(--space-md); }
+  .view-container { padding: var(--space-md) var(--space-md) 100px; }
   .view-header { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
   .view-actions { width: 100%; flex-wrap: wrap; }
   .board-view { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
@@ -49,6 +49,7 @@
   .grid-view { grid-template-columns: 1fr; }
   .ai-panel { width: 100%; }
   .fab { bottom: 80px; }
+  .toast-container { left: var(--space-sm); right: var(--space-sm); bottom: 80px; }
   .bottom-nav { display: flex; }
   .theme-picker { grid-template-columns: repeat(2, 1fr); }
   .chart-container canvas { width: 100% !important; height: auto !important; }
