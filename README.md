@@ -2,6 +2,7 @@
     <img src="https://capsule-render.vercel.app/api?type=venom&height=260&color=0:6366f1,25:a855f7,50:ec4899,75:f43f5e,100:f97316&text=TaskFlow&fontColor=ffffff&fontSize=68&animation=fadeIn&stroke=ffffff&strokeWidth=1&desc=AI-Powered%20Offline-First%20Todo%20Experience&descAlignY=66&descSize=18&descColor=ffffffcc" alt="TaskFlow header" />
 </p>
 
+
 <p align="center">
     <a href="#-live-highlights"><img src="https://img.shields.io/badge/Offline%20First-IndexedDB%20%2B%20Service%20Worker-6366f1?style=for-the-badge&logo=pwa&logoColor=white" alt="Offline First" /></a>
     <a href="#-ai-capabilities"><img src="https://img.shields.io/badge/AI-Groq%20%2B%20Llama%203.3%2070B-a855f7?style=for-the-badge&logo=openai&logoColor=white" alt="AI Stack" /></a>
