@@ -801,11 +801,13 @@
   <script type="module">
     import auth from './js/auth.js';
 
-    // ---- Redirect if already logged in ----
+    // ---- Redirect if already logged in (live session only) ----
     (async () => {
       try {
         await auth.init();
-        if (auth.isAuthenticated()) { window.location.replace('/app'); return; }
+        // Only redirect on a confirmed live Supabase session (auth.session),
+        // not stale localStorage — prevents redirect loop after logout
+        if (auth.session) { window.location.replace('/app'); }
       } catch {}
     })();
 
