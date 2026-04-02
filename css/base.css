@@ -308,3 +308,11 @@ a:hover { opacity: 0.9; }
 .pointer { cursor: pointer; }
 .select-none { user-select: none; }
 .no-shrink { flex-shrink: 0; }
+
+/* ---- Icon Sizing ---- */
+.icon    { width: 20px; height: 20px; flex-shrink: 0; display: inline-block; }
+.icon-xs { width: 14px; height: 14px; flex-shrink: 0; display: inline-block; }
+.icon-sm { width: 16px; height: 16px; flex-shrink: 0; display: inline-block; }
+.icon-lg { width: 24px; height: 24px; flex-shrink: 0; display: inline-block; }
+.icon-xl { width: 32px; height: 32px; flex-shrink: 0; display: inline-block; }
+svg.icon, svg.icon-xs, svg.icon-sm, svg.icon-lg, svg.icon-xl { color: currentColor; }
