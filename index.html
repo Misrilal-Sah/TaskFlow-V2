@@ -797,7 +797,126 @@
       item.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.classList.toggle('open'); } });
     });
   </script>
-  <script src="js/supabase.js"></script>
-  <script src="js/auth.js"></script>
+  <script type="module">
+    import auth from './js/auth.js';
+
+    // ---- Redirect if already logged in ----
+    (async () => {
+      try {
+        await auth.init();
+        if (auth.isAuthenticated()) { window.location.replace('/app'); return; }
+      } catch {}
+    })();
+
+    // ---- Helper: set button loading state ----
+    const setLoading = (btn, loading, originalText) => {
+      btn.disabled = loading;
+      btn.classList.toggle('btn-loading', loading);
+      if (!loading && originalText) btn.textContent = originalText;
+    };
+
+    // ---- Helper: show/hide error messages ----
+    const showErr = (id, show) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('visible', show);
+    };
+
+    // ---- Google Sign-In (both buttons) ----
+    const handleGoogle = async () => {
+      try {
+        await auth.signInWithGoogle();
+        // page will redirect via OAuth; no further action needed here
+      } catch (e) {
+        alert('Google sign-in failed: ' + (e.message || e));
+      }
+    };
+    document.getElementById('googleLoginBtn')?.addEventListener('click', handleGoogle);
+    document.getElementById('googleSignupBtn')?.addEventListener('click', handleGoogle);
+
+    // ---- Login Form ----
+    document.getElementById('loginFormEl')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn      = document.getElementById('loginBtn');
+      const originalText = btn.textContent;
+
+      let valid = true;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('loginEmailErr', true); valid = false; } else { showErr('loginEmailErr', false); }
+      if (!password)                                   { showErr('loginPasswordErr', true); valid = false; } else { showErr('loginPasswordErr', false); }
+      if (!valid) return;
+
+      setLoading(btn, true);
+      try {
+        await auth.signIn(email, password);
+        window.location.replace('/app');
+      } catch (err) {
+        setLoading(btn, false, originalText);
+        const msg = err.message || '';
+        if (msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('credentials')) {
+          showErr('loginPasswordErr', true);
+          document.getElementById('loginPasswordErr').textContent = 'Invalid email or password';
+        } else {
+          alert('Sign in failed: ' + msg);
+        }
+      }
+    });
+
+    // ---- Signup Form ----
+    document.getElementById('signupFormEl')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name     = document.getElementById('signupName').value.trim();
+      const email    = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const tosOk    = document.getElementById('tosCheck')?.checked;
+      const btn      = document.getElementById('signupBtn');
+      const originalText = btn.textContent;
+
+      let valid = true;
+      if (!name)                                             { showErr('signupNameErr', true); valid = false; } else { showErr('signupNameErr', false); }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))       { showErr('signupEmailErr', true); valid = false; } else { showErr('signupEmailErr', false); }
+      if (password.length < 8)                              { showErr('signupPasswordErr', true); valid = false; } else { showErr('signupPasswordErr', false); }
+      if (!tosOk) {
+        const grp = document.getElementById('tosGroup');
+        grp?.classList.add('tos-error');
+        setTimeout(() => grp?.classList.remove('tos-error'), 1500);
+        valid = false;
+      }
+      if (!valid) return;
+
+      setLoading(btn, true);
+      try {
+        await auth.signUp(email, password, name);
+        document.getElementById('signupFormEl').style.display = 'none';
+        document.getElementById('authSuccess').classList.add('active');
+      } catch (err) {
+        setLoading(btn, false, originalText);
+        const msg = err.message || '';
+        if (msg.toLowerCase().includes('already')) {
+          showErr('signupEmailErr', true);
+          document.getElementById('signupEmailErr').textContent = 'An account with this email already exists';
+        } else {
+          alert('Sign up failed: ' + msg);
+        }
+      }
+    });
+
+    // ---- Forgot Password ----
+    document.getElementById('forgotPwdLink')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showErr('loginEmailErr', true);
+        document.getElementById('loginEmail').focus();
+        return;
+      }
+      try {
+        await auth.resetPassword(email);
+        alert('Password reset email sent! Check your inbox.');
+      } catch (err) {
+        alert('Failed to send reset email: ' + (err.message || err));
+      }
+    });
+  </script>
 </body>
 </html>
